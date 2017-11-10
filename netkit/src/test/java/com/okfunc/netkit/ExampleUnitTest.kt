@@ -2,6 +2,7 @@ package com.okfunc.netkit
 
 import okhttp3.*
 import org.junit.Test
+import java.io.IOException
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction4
 
@@ -54,7 +55,20 @@ class ExampleUnitTest {
                 .header("demo", "zhangsan")
                 .header("demo", "lisi")
                 .addHeader("demo", "zhangsan")
+                .delete()
                 .build()
+
+        val x = client.newCall(request)
+
+        x.enqueue(object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+
+            }
+        })
 
         client.newCall(request).execute().body()?.close()
     }

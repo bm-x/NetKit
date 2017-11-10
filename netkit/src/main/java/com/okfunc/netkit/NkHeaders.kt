@@ -1,15 +1,16 @@
 package com.okfunc.netkit
 
+import okhttp3.Request
 import kotlin.collections.ArrayList
 
 /**
  * Created by buck on 2017/10/28.
  */
 
-open class NkHeaders {
+open class NkHeaders(initCapacity: Int = 4) {
 
-    protected val keys = ArrayList<String>(4)
-    protected val values = ArrayList<String?>(4)
+    protected val keys = ArrayList<String>(initCapacity)
+    protected val values = ArrayList<String?>(initCapacity)
 
     fun add(key: String, value: String) {
         keys.add(key)
@@ -46,5 +47,19 @@ open class NkHeaders {
             val value = values[index]
             if (value != null) block(key, value)
         }
+    }
+
+    fun clear() {
+        keys.clear()
+        values.clear()
+    }
+
+    fun copyTo(another: NkHeaders) = forEach { key, value ->
+        another.keys.plus(key)
+        another.values.plus(value)
+    }
+
+    fun copyTo(builder: Request.Builder) = forEach { key, value ->
+        builder.header(key, value)
     }
 }

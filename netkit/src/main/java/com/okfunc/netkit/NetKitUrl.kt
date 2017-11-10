@@ -3,32 +3,30 @@ package com.okfunc.netkit
 import com.okfunc.netkit.convert.NetKitConvert
 import com.okfunc.netkit.convert.StringConvert
 import com.okfunc.netkit.request.NkRequest
-import com.okfunc.netkit.NetKit.POST
-import com.okfunc.netkit.request.NkPostRequest
 
 /**
  *
  * Created by buck on 2017/11/2.
  */
-class NetKitUrl(val host: String?, val path: String?) {
 
-    private var method = "NONE"
+open class NetKitUrl(val host: String?, val path: String?) {
+    constructor(path: String?) : this(null, path)
+    constructor() : this(null, null)
 
-    fun get() = also { method = NetKit.GET }
-    fun post() = also { method = NetKit.POST }
-    fun put() = also { method = NetKit.PUT }
-    fun delete() = also { method = NetKit.DELETE }
-
-    fun <T> convert(convert: NetKitConvert<T>): NkRequest<T> {
-        val request = when (method) {
-            POST -> NkPostRequest(convert)
-            else -> NkRequest(convert)
-        }
-        request.url(host, path)
-        return request
-    }
+    open fun <T> convert(convert: NetKitConvert<T>) = NkRequest(convert).url(host, path)
 
     fun stringConvert() = convert(StringConvert())
+}
 
+open class NetKitGetUrl(host: String?, path: String?) : NetKitUrl(host, path) {
+    constructor(path: String?) : this(null, path)
+
+    override fun <T> convert(convert: NetKitConvert<T>) = super.convert(convert).get()
+}
+
+open class NetKitPostUrl(host: String?, path: String?) : NetKitUrl(host, path) {
+    constructor(path: String?) : this(null, path)
+
+    override fun <T> convert(convert: NetKitConvert<T>) = super.convert(convert).post()
 }
 
