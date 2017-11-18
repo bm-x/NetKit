@@ -55,8 +55,8 @@ open class NkHeaders(initCapacity: Int = 4) {
     }
 
     fun copyTo(another: NkHeaders) = forEach { key, value ->
-        another.keys.plus(key)
-        another.values.plus(value)
+        another.keys.add(key)
+        another.values.add(value)
     }
 
     fun copyTo(builder: Request.Builder) = forEach { key, value ->

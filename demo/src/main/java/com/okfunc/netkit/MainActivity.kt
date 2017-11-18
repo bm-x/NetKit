@@ -2,8 +2,8 @@ package com.okfunc.netkit
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.okfunc.netkit.convert.StringConvert
-import com.okfunc.netkit.request.NkRequest
+import android.util.Log
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -11,13 +11,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        btn.setOnClickListener {
+            val x = this::abc
+            Log.i("buck", "${x.parameters}");
+        }
     }
-}
 
-class aaaa : NkRequest<String>(StringConvert()) {
-
-    fun aaa() {
+    fun abc(name: String, age: Int) {
 
     }
 }

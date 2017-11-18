@@ -1,1 +1,1 @@
-include ':simple', ':netkit'
+include ':demo', ':netkit'

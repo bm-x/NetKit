@@ -1,8 +1,10 @@
 package com.okfunc.netkit
 
+import com.okfunc.netkit.request.NkRequest
 import okhttp3.*
 import org.junit.Test
 import java.io.IOException
+import kotlin.reflect.KFunction
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction4
 
@@ -15,6 +17,30 @@ class ExampleUnitTest {
 
     @Test
     fun netkit1() {
+        NetKit.get("http://www.baidu.com").stringConvert()
+                .successOn(this::headerParpre)
+                .onSuccess { target, bundle, req, res, ignore ->
+                    println(target)
+                }
+                .end()
+
+        Thread.sleep(3000)
+    }
+
+    fun headerParpre(bundle: NkBundle, ignore: NkIgnore) {
+        val cc = bundle.okRespone()?.header("Cache-Control")
+        if (cc != null && cc.isNotEmpty()) {
+            ignore.ignore()
+            println("has header Cache-Control:${cc}  ignore other success func")
+        }
+        println("headerParpre")
+    }
+
+    protected fun callFunc(func: KFunction<*>, vararg args: Any) {
+        println(func)
+    }
+
+    fun xxxx(target: String, bundle: NkBundle, ignore: NkIgnore, req: NkRequest<String>, res: NkResponse) {
 
     }
 

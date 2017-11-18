@@ -15,6 +15,9 @@ class NkConfig() {
     protected val header = NkHeaders()
     protected val params = HashMap<String, Any>()
     protected var cacheMode = CacheMode.NONE
+    var host: String? = null
+
+    fun host(host: String?) = also { this.host = host }
 
     fun header(key: String, value: String) = also { header.set(key, value) }
 

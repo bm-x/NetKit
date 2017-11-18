@@ -31,6 +31,4 @@ object NetKit {
     }
 
     internal fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
-
-
 }
