@@ -2,6 +2,7 @@ package com.okfunc.netkit.request
 
 import com.okfunc.netkit.*
 import com.okfunc.netkit.convert.NkConvert
+import okhttp3.MediaType
 import okhttp3.Request
 import java.util.*
 import kotlin.collections.ArrayList
@@ -20,6 +21,9 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     val header = NkHeaders()
     val params = HashMap<String, Any>()
+
+    var postContent: String? = null
+    var mediaType: MediaType? = null
 
     val callbacks = ArrayList<NkCallback<Any>>(2)
 
@@ -73,6 +77,11 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun get() = also { requestAssemble = NkGetAssemble<T>() }
 
     fun post() = also { requestAssemble = NkPostAssemble<T>() }
+
+    fun json(json: String) = also {
+        mediaType = MEDIA_TYPE_JSON
+        postContent = json
+    }
 
     fun end() {
         NkCall(this as NkRequest<Any>).start()
