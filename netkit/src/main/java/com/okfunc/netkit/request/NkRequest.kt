@@ -1,6 +1,8 @@
 package com.okfunc.netkit.request
 
 import com.okfunc.netkit.*
+import com.okfunc.netkit.cache.CachePolicy
+import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.convert.NkConvert
 import okhttp3.MediaType
 import okhttp3.Request
@@ -15,6 +17,8 @@ import kotlin.reflect.KFunction
 
 
 open class NkRequest<T>(val convert: NkConvert<T>) {
+
+    var tag: Any? = null
 
     var host: String? = null
     var path: String? = null
@@ -34,9 +38,17 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     var requestAssemble: NkRequestAssemble<T>? = null
 
+    var cachePolicy: ICachePolicy? = null
+
     init {
         NetKit.globalConfig.copyTo(this)
     }
+
+    fun cachePolicy(policy: ICachePolicy) = also { cachePolicy = policy }
+
+    fun cachePolicy(policy: CachePolicy) = also { cachePolicy = policy.policy() }
+
+    fun tag(tag: Any?) = also { this.tag = tag }
 
     fun onSuccess(success: NK_SUCCESS<T>) = also { addfunc(K_SUCCESS, success) }
 
@@ -84,7 +96,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     }
 
     fun end() {
-        NkCall(this as NkRequest<Any>).start()
+        NkController.enqueue(this as NkRequest<Any>)
     }
 
     fun buildOkRequest(): Request {

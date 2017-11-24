@@ -1,9 +1,13 @@
 package com.okfunc.netkit
 
+import android.util.Log
 import com.okfunc.netkit.request.NkRequest
 import okhttp3.*
+import okio.Buffer
 import org.junit.Test
+import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.nio.charset.Charset
 import kotlin.reflect.KFunction
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KFunction4
@@ -17,12 +21,12 @@ class ExampleUnitTest {
 
     @Test
     fun netkit1() {
-        NetKit.get("http://www.baidu.com").stringConvert()
-                .successOn(this::headerParpre)
+        NetKit.globalConfig = NkConfig().httpLog(true)
+        NetKit.post("http://www.baidu.com/").stringConvert()
+                .json("--------------")
                 .onSuccess { target, bundle, req, res, ignore ->
-                    println(target)
-                }
-                .end()
+                    Log.i("clyde", "onSuccess")
+                }.end()
 
         Thread.sleep(3000)
     }
@@ -74,29 +78,31 @@ class ExampleUnitTest {
 
     @Test
     fun addition_isCorrect() {
-        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+        val client = OkHttpClient.Builder().build()
 
         val request = Request.Builder()
                 .url("http://www.baidu.com/")
                 .header("demo", "zhangsan")
                 .header("demo", "lisi")
                 .addHeader("demo", "zhangsan")
-                .delete()
+                .post(RequestBody.create(MEDIA_TYPE_PLAIN, "test------------"))
                 .build()
 
-        val x = client.newCall(request)
+        val buf1 = Buffer()
+        request.body()?.writeTo(buf1)
 
-        x.enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
+        val buf2 = Buffer()
+        request.body()?.writeTo(buf2)
 
-            }
+        println(buf1.readString(Charset.forName("UTF-8")))
+        println(buf2.readString(Charset.forName("UTF-8")))
 
-            override fun onResponse(call: Call?, response: Response?) {
+        //val x = client.newCall(request)
 
-            }
-        })
-
-        client.newCall(request).execute().body()?.close()
+//        val out = ByteArrayOutputStream()
+//        val res = client.newCall(request).execute()
+//        println(out.toString())
+//        println("------------------------------------")
     }
 
     val interceptor: (chain: Interceptor.Chain) -> Response = { chain ->

@@ -22,3 +22,17 @@ internal typealias NK_ERROR<T> = (error: Throwable, req: NkRequest<T>, ignore: N
 internal typealias NK_UPLOAD_PROGRESS<T> = (req: NkRequest<T>) -> Unit
 
 internal typealias NK_DOWNLOAD_PROGRESS<T> = (req: NkRequest<T>) -> Unit
+
+internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it: T) -> Boolean) {
+    removeIft(ifReturn, block, null)
+}
+
+internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it: T) -> Boolean, then: ((it: T) -> Unit)? = null) {
+    for (index in size - 1 downTo 0) {
+        if (block(get(index))) {
+            removeAt(index)
+            if (then != null) then(get(index))
+            if (ifReturn) return
+        }
+    }
+}

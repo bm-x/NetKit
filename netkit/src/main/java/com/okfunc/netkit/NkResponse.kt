@@ -1,5 +1,6 @@
 package com.okfunc.netkit
 
+import okhttp3.Call
 import okhttp3.Response
 
 /**
@@ -9,7 +10,7 @@ import okhttp3.Response
 class NkResponse {
 
     companion object {
-        internal fun formOkResponse(res: Response): NkResponse {
+        internal fun formOkResponse(call: Call, res: Response): NkResponse {
             return NkResponse()
         }
     }
