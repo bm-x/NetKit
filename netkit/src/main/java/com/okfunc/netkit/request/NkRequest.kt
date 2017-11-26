@@ -6,6 +6,7 @@ import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.convert.NkConvert
 import okhttp3.MediaType
 import okhttp3.Request
+import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.reflect.KFunction
@@ -102,10 +103,13 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun buildOkRequest(): Request {
         val builder = Request.Builder()
         header.copyTo(builder)
-        builder.url(buildUrl())
+        builder.url(fullPath)
         requestAssemble?.assemble(builder, this) ?: NkGetAssemble<T>().assemble(builder, this)
         return builder.build()
     }
+
+    internal val fullPath: String by lazy { buildUrl() }
+    internal val encodeFullPath: String by lazy { URLEncoder.encode(fullPath, UTF8) }
 
     protected fun buildUrl(): String {
         val host = host ?: NetKit.globalConfig.host

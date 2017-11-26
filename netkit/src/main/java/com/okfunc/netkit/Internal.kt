@@ -7,6 +7,8 @@ import okhttp3.MediaType
  * Created by bm on 2017/11/16.
  */
 
+internal val UTF8 = "utf-8"
+
 internal val MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8")
 internal val MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8")
 internal val MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream")

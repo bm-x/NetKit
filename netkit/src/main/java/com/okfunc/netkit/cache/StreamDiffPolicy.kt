@@ -24,8 +24,6 @@ class StreamDiffPolicy : ICachePolicy {
     override fun onStart(call: NkCall) {
         val dir = directory ?: return
 
-        
-
     }
 
     override fun onResponse(call: Call, response: Response, block: (call: Call, response: Response) -> Unit) {
