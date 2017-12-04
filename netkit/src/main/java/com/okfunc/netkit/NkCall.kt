@@ -1,5 +1,6 @@
 package com.okfunc.netkit
 
+import android.util.Log
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.request.NkRequest
 import okhttp3.Call
@@ -10,6 +11,7 @@ import java.io.IOException
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
+import kotlin.reflect.jvm.javaType
 
 /**
  *
@@ -101,7 +103,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
             list.add(null)
             args.forEach p@ {
                 val t = it::class.starProjectedType
-                if (t == fp.type || t.isSubtypeOf(fp.type)) {
+                if (t == fp.type || t.isSubtypeOf(fp.type) || t.classifier == fp.type.classifier) {
                     list[index] = it
                     return@p
                 }

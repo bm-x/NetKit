@@ -7,9 +7,9 @@ import okhttp3.Response
 import java.io.File
 
 /**
+ *
  * Created by clyde on 2017/11/24.
  */
-
 class StreamDiffPolicy : ICachePolicy {
 
     var directory: File? = null
