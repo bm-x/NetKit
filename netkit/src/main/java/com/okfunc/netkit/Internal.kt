@@ -1,5 +1,7 @@
 package com.okfunc.netkit
 
+import android.os.Handler
+import android.os.Looper
 import com.okfunc.netkit.request.NkRequest
 import okhttp3.MediaType
 
@@ -38,3 +40,10 @@ internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it:
         }
     }
 }
+
+
+internal fun ui(block: () -> Unit) = handler.post(block)
+
+internal val handler = MainThreadHandler()
+
+internal class MainThreadHandler : Handler(Looper.getMainLooper())

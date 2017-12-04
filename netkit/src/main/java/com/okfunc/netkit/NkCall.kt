@@ -39,7 +39,9 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     }
 
     fun onAllFailure(call: Call, ex: Throwable) {
-        onError(ex)
+        ex.printStackTrace()
+        ui { onError(ex) }
+        ui { onFinish() }
     }
 
     override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e)
@@ -47,7 +49,8 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     override fun onResponse(c: Call, res: Response) = try {
         cachePolicy.onResponse(c, res) { call, response ->
             bundle.okRespone(response)
-            onSuccess(req.convert.convertResponse(response, bundle), NkResponse.formOkResponse(call, response))
+            ui { onSuccess(req.convert.convertResponse(response, bundle), NkResponse.formOkResponse(call, response)) }
+            ui { onFinish() }
         }
     } catch (ex: Throwable) {
         onAllFailure(c, ex)
