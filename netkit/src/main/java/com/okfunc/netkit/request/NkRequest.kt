@@ -4,8 +4,10 @@ import com.okfunc.netkit.*
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.convert.NkConvert
+import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.Request
+import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
@@ -113,7 +115,24 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     protected fun buildUrl(): String {
         val host = host ?: NetKit.globalConfig.host
-        return if (host == null) path!! else "$host${path}"
+        val path = if (host == null) path!! else "$host${path}"
+        val sb = StringBuilder(path)
+        if (NetKit.globalConfig.params.isNotEmpty()) {
+            if (!sb.contains('?')) {
+                sb.append('?')
+            }
+            if (sb.contains('&') && !sb.endsWith('&')) {
+                sb.append('&')
+            }
+            for ((key, value) in NetKit.globalConfig.params) {
+                sb.append(key)
+                sb.append('=')
+                sb.append(value)
+                sb.append('&')
+            }
+            sb.deleteCharAt(sb.length - 1)
+        }
+        return sb.toString()
     }
 
     fun clone(): NkRequest<T> {

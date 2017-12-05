@@ -10,7 +10,7 @@ interface NkCallback<T> {
 
     fun onFinish(req: NkRequest<T>) = Unit
 
-    fun onError(error: Throwable, req: NkRequest<T>) = Unit
+    fun onError(error: Throwable, bundle: NkBundle, req: NkRequest<T>) = Unit
 
     fun onSuccess(target: T, bundle: NkBundle, req: NkRequest<T>, res: NkResponse) = Unit
 

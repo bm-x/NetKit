@@ -51,9 +51,11 @@ object NetKit {
     internal fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
 }
 
+fun Any.post(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
 fun Any.post(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }
 fun Any.post(host: String?, path: String?) = NetKit.post(host, path).also { it.tag = tagFilter(this) }
 
+fun Any.get(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
 fun Any.get(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }
 fun Any.get(host: String?, path: String?) = NetKit.post(host, path).also { it.tag = tagFilter(this) }
 
