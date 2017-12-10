@@ -32,10 +32,10 @@ internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it:
 }
 
 internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it: T) -> Boolean, then: ((it: T) -> Unit)? = null) {
-    for (index in size - 1 downTo 0) {
+    for (index in (size - 1) downTo 0) {
         if (block(get(index))) {
-            removeAt(index)
-            if (then != null) then(get(index))
+            val rm = removeAt(index)
+            if (then != null) then(rm)
             if (ifReturn) return
         }
     }
