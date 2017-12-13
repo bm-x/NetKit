@@ -49,6 +49,8 @@ open class NkHeaders(initCapacity: Int = 4) {
         }
     }
 
+    fun isEmpty() = keys.isEmpty() || values.isEmpty()
+
     fun clear() {
         keys.clear()
         values.clear()

@@ -28,6 +28,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     val header = NkHeaders()
     val params = HashMap<String, Any>()
+    var multipart: NkHeaders? = null
 
     var postContent: String? = null
     var mediaType: MediaType? = null
@@ -88,6 +89,13 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun addOnHeader(key: String, value: String) = also { header.addOn(key, value) }
 
     fun params(key: String, value: Any) = also { params[key] = value }
+
+    fun multipart(key: String, value: String) = also {
+        if (multipart == null) {
+            multipart = NkHeaders()
+        }
+        multipart?.add(key, value)
+    }
 
     fun get() = also { requestAssemble = NkGetAssemble<T>() }
 
