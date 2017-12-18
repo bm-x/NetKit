@@ -56,8 +56,8 @@ class NkHttpLog : Interceptor {
     fun readCharset(mt: MediaType?) = (mt?.charset(UTF8) ?: UTF8) ?: UTF8
 
     fun isPlainText(mt: MediaType?)
-            = ("text" == mt?.type())
-            || (mt?.subtype()?.toLowerCase()?.let { it == "json" || it == "xml" || it == "html" || it == "x-www-form-urlencoded" }
+            = ("text" == mt?.type()) || ("multipart" == mt?.type())
+            || (mt?.subtype()?.toLowerCase()?.let { it == "json" || it == "xml" || it == "html" || it == "x-www-form-urlencoded" || it == "form-data" }
             ?: false)
 
     private val UTF8 = Charset.forName("UTF-8")

@@ -91,6 +91,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun params(key: String, value: Any) = also { params[key] = value }
 
     fun multipart(key: String, value: String) = also {
+        mediaType = MEDIA_TYPE_FORM
         if (multipart == null) {
             multipart = NkHeaders()
         }
