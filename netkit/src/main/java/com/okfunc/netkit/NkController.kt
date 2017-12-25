@@ -31,4 +31,9 @@ object NkController {
             queue.removeIft(true) { it.req == req }
         }
     }
+
+    fun cancelAll(){
+        queue.forEach { it.cancel() }
+        queue.clear()
+    }
 }

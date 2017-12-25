@@ -24,6 +24,8 @@ object NetKit {
 
     fun cancel(tag: Any) = NkController.cancel(tag)
 
+    fun cancelAll() = NkController.cancelAll()
+
     fun request(path: String?) = NetKitUrl(null, path)
 
     fun request(host: String?, path: String?) = NetKitUrl(null, null)

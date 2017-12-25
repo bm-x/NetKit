@@ -47,10 +47,14 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e)
 
     override fun onResponse(c: Call, res: Response) = try {
-        cachePolicy.onResponse(c, res) { call, response ->
+        cachePolicy.onResponse(c, res) policy@ { call, response ->
             bundle.okRespone(response)
-            postui { onSuccess(req.convert.convertResponse(response, bundle), NkResponse.formOkResponse(call, response)) }
-            postui { onFinish() }
+            val ignore = NkIgnore()
+            val result = req.convert.convertResponse(response, bundle, ignore)
+            if (!ignore.ignore&&!c.isCanceled) {
+                postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
+                postui { onFinish() }
+            }
         }
     } catch (ex: Throwable) {
         onAllFailure(c, ex)
