@@ -26,6 +26,8 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     val bundle = NkBundle()
     val cachePolicy: ICachePolicy = req.cachePolicy ?: NetKit.globalConfig.cachePolicy
 
+    var block = false
+
     init {
         okRequest = req.buildOkRequest()
         okCall = okClient.newCall(okRequest)
@@ -40,37 +42,39 @@ class NkCall(val req: NkRequest<Any>) : Callback {
 
     fun onAllFailure(call: Call, ex: Throwable) {
         ex.printStackTrace()
-        postui { onError(ex) }
-        postui { onFinish() }
+        ui(false) { onError(ex) }
+        ui(false) { onFinish() }
     }
 
     override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e)
 
-    override fun onResponse(c: Call, res: Response) = try {
-        cachePolicy.onResponse(c, res) policy@ { call, response ->
-            bundle.okRespone(response)
-            val ignore = NkIgnore()
-            val result = req.convert.convertResponse(response, bundle, ignore)
-            if (!ignore.ignore && !c.isCanceled) {
-                postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
-                postui { onFinish() }
+    override fun onResponse(c: Call, res: Response) {
+        try {
+            cachePolicy.onResponse(c, res) { call, response ->
+                bundle.okRespone(response)
+                val result = req.convert.convertResponse(response, bundle, this)
+                ui {
+                    onSuccess(result, NkResponse.formOkResponse(call, response))
+                    onFinish()
+                }
             }
+        } catch (ex: Throwable) {
+            onAllFailure(c, ex)
         }
-    } catch (ex: Throwable) {
-        onAllFailure(c, ex)
     }
 
-    fun postui(block: () -> Unit) {
-        ui {
+    fun ui(responeFail: Boolean = true, block: () -> Unit) {
+        uihandler.post {
             try {
                 block()
             } catch (ex: Throwable) {
-                onAllFailure(okCall, ex)
+                if (responeFail) onAllFailure(okCall, ex)
             }
         }
     }
 
     fun cancel() {
+        block = true
         okCall.cancel()
     }
 

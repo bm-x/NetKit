@@ -43,8 +43,6 @@ internal fun <T> MutableList<T>.removeIft(ifReturn: Boolean = false, block: (it:
 }
 
 
-internal fun ui(block: () -> Unit) = handler.post(block)
-
-internal val handler = MainThreadHandler()
+internal val uihandler = MainThreadHandler()
 
 internal class MainThreadHandler : Handler(Looper.getMainLooper())
