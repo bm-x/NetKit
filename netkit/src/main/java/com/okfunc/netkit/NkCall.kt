@@ -51,7 +51,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
             bundle.okRespone(response)
             val ignore = NkIgnore()
             val result = req.convert.convertResponse(response, bundle, ignore)
-            if (!ignore.ignore&&!c.isCanceled) {
+            if (!ignore.ignore && !c.isCanceled) {
                 postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
                 postui { onFinish() }
             }
