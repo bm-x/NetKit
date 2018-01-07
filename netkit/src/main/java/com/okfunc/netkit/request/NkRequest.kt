@@ -126,14 +126,15 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
         val host = host ?: NetKit.globalConfig.host
         val path = if (host == null) path!! else "$host${path}"
         val sb = StringBuilder(path)
-        if (NetKit.globalConfig.params.isNotEmpty()) {
+        if (NetKit.globalConfig.params.isNotEmpty()) params.putAll(NetKit.globalConfig.params)
+        if (params.isNotEmpty()) {
             if (!sb.contains('?')) {
                 sb.append('?')
             }
             if (sb.contains('&') && !sb.endsWith('&')) {
                 sb.append('&')
             }
-            for ((key, value) in NetKit.globalConfig.params) {
+            for ((key, value) in params) {
                 sb.append(key)
                 sb.append('=')
                 sb.append(value)
@@ -141,6 +142,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
             }
             sb.deleteCharAt(sb.length - 1)
         }
+
         return sb.toString()
     }
 
