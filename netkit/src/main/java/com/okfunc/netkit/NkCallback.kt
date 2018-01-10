@@ -14,6 +14,8 @@ interface NkCallback<T> {
 
     fun onSuccess(target: T, bundle: NkBundle, req: NkRequest<T>, res: NkResponse) = Unit
 
+    fun beforeSuccess(target: T, bundle: NkBundle, req: NkRequest<T>, res: NkResponse) = Unit
+
     fun onUploadProgress() = Unit
 
     fun onDownloadProgress() = Unit

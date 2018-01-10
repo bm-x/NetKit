@@ -52,6 +52,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
             val ignore = NkIgnore()
             val result = req.convert.convertResponse(response, bundle, ignore)
             if (!ignore.ignore && !c.isCanceled) {
+                beforeSuccess(result, NkResponse.formOkResponse(call, response))
                 postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
                 postui { onFinish() }
             }
@@ -102,6 +103,16 @@ class NkCall(val req: NkRequest<Any>) : Callback {
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onError(ex, bundle, req) }
+    }
+
+    fun beforeSuccess(result: Any, res: NkResponse) {
+        val ignore = NkIgnore()
+        req.eachFunc(NkRequest.K_BEFORE_SUCCESS) {
+            if (it is KFunction<*>) callFunc(it, result, bundle, req, res, ignore)
+            else (it as? NK_BEFORE_SUCCESS<Any>)?.invoke(result, bundle, req, res, ignore)
+            if (ignore.ignore) return
+        }
+        req.callbacks.forEach { it.beforeSuccess(result, bundle, req, res) }
     }
 
     fun onSuccess(result: Any, res: NkResponse) {

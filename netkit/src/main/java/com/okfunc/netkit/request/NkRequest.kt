@@ -54,6 +54,8 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun tag(tag: Any?) = also { this.tag = tag }
 
+    fun beforeSuccess(success: NK_BEFORE_SUCCESS<T>) = also { addfunc(K_BEFORE_SUCCESS, success) }
+
     fun onSuccess(success: NK_SUCCESS<T>) = also { addfunc(K_SUCCESS, success) }
 
     fun onStart(start: NK_START<T>) = also { addfunc(K_START, start) }
@@ -167,11 +169,12 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     }
 
     companion object {
-        internal const val K_SUCCESS = "1success"
-        internal const val K_START = "2start"
-        internal const val K_FINISH = "3finish"
-        internal const val K_ERROR = "4error"
-        internal const val K_DOWNLOAD_PROGRESS = "5download_progress"
-        internal const val K_UPLOAD_PROGRESS = "6upload_progress"
+        internal const val K_SUCCESS = "1_success"
+        internal const val K_START = "2_start"
+        internal const val K_FINISH = "3_finish"
+        internal const val K_ERROR = "4_error"
+        internal const val K_DOWNLOAD_PROGRESS = "5_download_progress"
+        internal const val K_UPLOAD_PROGRESS = "6_upload_progress"
+        internal const val K_BEFORE_SUCCESS = "7_before_success"
     }
 }
