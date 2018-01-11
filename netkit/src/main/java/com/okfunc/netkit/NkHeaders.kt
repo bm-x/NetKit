@@ -17,7 +17,7 @@ open class NkHeaders(initCapacity: Int = 4) {
         values.add(value)
     }
 
-    fun set(key: String, value: String) {
+    fun set(key: String, value: String?) {
         remove(key)
         keys.add(key)
         values.add(value)

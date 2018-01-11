@@ -34,7 +34,7 @@ class NkConfig() {
 
     fun host(host: String?) = also { this.host = host }
 
-    fun header(key: String, value: String) = also { header.set(key, value) }
+    fun header(key: String, value: String?) = also { header.set(key, value) }
 
     fun addHeader(key: String, value: String) = also { header.add(key, value) }
 
