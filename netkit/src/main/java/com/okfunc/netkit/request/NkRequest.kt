@@ -92,12 +92,12 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun params(key: String, value: Any) = also { params[key] = value }
 
-    fun multipart(key: String, value: String) = also {
+    fun multipart(key: String, value: Any) = also {
         mediaType = MEDIA_TYPE_FORM
         if (multipart == null) {
             multipart = NkHeaders()
         }
-        multipart?.add(key, value)
+        multipart?.add(key, value.toString())
     }
 
     fun get() = also { requestAssemble = NkGetAssemble<T>() }

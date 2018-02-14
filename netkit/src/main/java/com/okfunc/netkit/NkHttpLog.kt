@@ -3,6 +3,7 @@ package com.okfunc.netkit
 import android.util.Log
 import okhttp3.*
 import okio.Buffer
+import org.json.JSONObject
 import java.nio.charset.Charset
 
 /**
@@ -34,8 +35,17 @@ class NkHttpLog : Interceptor {
         val body = if (isPlainText(response.body()?.contentType())) {
             val bytes = response.body()?.bytes()
             val type = response.body()?.contentType()
-            res = response.newBuilder().body(ResponseBody.create(type, bytes ?: ByteArray(0))).build()
-            String(bytes ?: "respone body is null".toByteArray(), readCharset(type))
+            res = response.newBuilder().body(ResponseBody.create(type, bytes
+                    ?: ByteArray(0))).build()
+            if (bytes == null) {
+                "respone body is null"
+            } else {
+                try {
+                    JSONObject(String(bytes)).toString()
+                } catch (e: Throwable) {
+                    String(bytes)
+                }
+            }
         } else "maybe [binary body], omitted!"
 
         val t2 = System.nanoTime()
@@ -55,8 +65,7 @@ class NkHttpLog : Interceptor {
 
     fun readCharset(mt: MediaType?) = (mt?.charset(UTF8) ?: UTF8) ?: UTF8
 
-    fun isPlainText(mt: MediaType?)
-            = ("text" == mt?.type()) || ("multipart" == mt?.type())
+    fun isPlainText(mt: MediaType?) = ("text" == mt?.type()) || ("multipart" == mt?.type())
             || (mt?.subtype()?.toLowerCase()?.let { it == "json" || it == "xml" || it == "html" || it == "x-www-form-urlencoded" || it == "form-data" }
             ?: false)
 
