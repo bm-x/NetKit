@@ -11,6 +11,7 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 import kotlin.reflect.KFunction
 
 /**
@@ -90,10 +91,12 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun addOnHeader(key: String, value: String) = also { header.addOn(key, value) }
 
-    fun params(key: String, value: Any) = also { params[key] = value }
+    fun params(key: String, value: Any) = also {
+        mediaType = MEDIA_TYPE_FORM_URLENCODED
+        params[key] = value
+    }
 
     fun multipart(key: String, value: Any) = also {
-        mediaType = MEDIA_TYPE_FORM
         if (multipart == null) {
             multipart = NkHeaders()
         }
@@ -116,13 +119,16 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun buildOkRequest(): Request {
         val builder = Request.Builder()
         header.copyTo(builder)
+        val assemble: NkRequestAssemble<T> = requestAssemble ?: NkGetAssemble<T>()
+        fullPath = assemble.buildUrl(builder, this)
+        encodeFullPath = URLEncoder.encode(fullPath)
         builder.url(fullPath)
-        requestAssemble?.assemble(builder, this) ?: NkGetAssemble<T>().assemble(builder, this)
+        assemble.assemble(builder, this)
         return builder.build()
     }
 
-    internal val fullPath: String by lazy { buildUrl() }
-    internal val encodeFullPath: String by lazy { URLEncoder.encode(fullPath, UTF8) }
+    internal var fullPath: String by Delegates.notNull()
+    internal var encodeFullPath: String by Delegates.notNull()
 
     protected fun buildUrl(): String {
         val host = host ?: NetKit.globalConfig.host

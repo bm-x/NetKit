@@ -7,4 +7,6 @@ import okhttp3.Request
  */
 interface NkRequestAssemble<T> {
     fun assemble(builder: Request.Builder, req: NkRequest<T>)
+
+    fun buildUrl(builder: Request.Builder, req: NkRequest<T>): String
 }

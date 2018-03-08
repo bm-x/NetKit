@@ -14,7 +14,7 @@ internal val UTF8 = "utf-8"
 internal val MEDIA_TYPE_PLAIN = MediaType.parse("text/plain;charset=utf-8")
 internal val MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8")
 internal val MEDIA_TYPE_STREAM = MediaType.parse("application/octet-stream")
-internal val MEDIA_TYPE_FORM = MediaType.parse("application/x-www-form-urlencoded")
+internal val MEDIA_TYPE_FORM_URLENCODED = MediaType.parse("application/x-www-form-urlencoded")
 
 internal typealias NK_SUCCESS<T> = (target: T, bundle: NkBundle, req: NkRequest<T>, res: NkResponse, ignore: NkIgnore) -> Unit
 

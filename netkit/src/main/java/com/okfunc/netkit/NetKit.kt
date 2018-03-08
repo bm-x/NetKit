@@ -57,9 +57,9 @@ fun Any.post(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter
 fun Any.post(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }
 fun Any.post(host: String?, path: String?) = NetKit.post(host, path).also { it.tag = tagFilter(this) }
 
-fun Any.get(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
-fun Any.get(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }
-fun Any.get(host: String?, path: String?) = NetKit.post(host, path).also { it.tag = tagFilter(this) }
+fun Any.get(path: () -> String) = NetKit.get(path()).also { it.tag = tagFilter(this) }
+fun Any.get(path: String?) = NetKit.get(path).also { it.tag = tagFilter(this) }
+fun Any.get(host: String?, path: String?) = NetKit.get(host, path).also { it.tag = tagFilter(this) }
 
 internal fun tagFilter(tag: Any?): Any? =
         if (tag is Activity || tag is Fragment || tag is android.app.Fragment) tag
