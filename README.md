@@ -1,8 +1,19 @@
 #Netkit
 
-I Hope like this:
+实在受不了什么retrofit，rxjava等等等等的网络请求方式了
+
+我希望的请求方式是这样的~
 
 ```kotlin
+  
+  // get https://www.api.com/example/get?key1=value1&key2=value2
+  get("https://www.api.com/example/get").stringConvert()
+          .params("key1","value1")
+          .params("key2","value2")
+          .onSuccess { target, bundle, req, res, ignore -> }
+          .end()
+  
+  // 表单方式 post
   post("https://www.api.com/example/login").objectConvert<UserBean>()
                 .errorHandler()
                 .loadingDialog()
