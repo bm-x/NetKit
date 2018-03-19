@@ -10,13 +10,6 @@ I Hope like this:
                 .multipart("pwd", "123456")
                 .onSuccess { userInstance, bundle, req, res, ignore ->
                     toast("登入成功  user is : ${userInstance}")
-                    
-                    // 通过ignore可以决定是否将success回调继续向下传递~
-                    ignore.ignore()
-                }
-                // 可设置多个回调，而不相互影响,回调回按顺序执行
-                .onSuccess { userInstance, bundle, req, res, ignore ->
-                    // then
                 }
                 .onError { error, bundle, req, ignore ->
                     // handle error
