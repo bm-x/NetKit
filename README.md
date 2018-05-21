@@ -1,6 +1,6 @@
 #Netkit
 
-实在受不了什么retrofit，rxjava等等等等的网络请求方式了
+不喜欢什么retrofit，rxjava等等等等的网络请求方式了
 
 我希望的请求方式是这样的~
 
