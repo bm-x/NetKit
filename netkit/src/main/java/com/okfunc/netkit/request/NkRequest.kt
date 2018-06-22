@@ -49,6 +49,8 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
         NetKit.globalConfig.copyTo(this)
     }
 
+    fun runIf(run: Boolean, block: NkRequest<T>.() -> Unit) = also { if (run) this.block() }
+
     fun cachePolicy(policy: ICachePolicy) = also { cachePolicy = policy }
 
     fun cachePolicy(policy: CachePolicy) = also { cachePolicy = policy.policy() }
