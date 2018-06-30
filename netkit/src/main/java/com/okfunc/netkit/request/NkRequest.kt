@@ -141,7 +141,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
             if (!sb.contains('?')) {
                 sb.append('?')
             }
-            if (sb.contains('&') && !sb.endsWith('&')) {
+            if (!sb.endsWith('&') && !sb.endsWith('?')) {
                 sb.append('&')
             }
             for ((key, value) in params) {

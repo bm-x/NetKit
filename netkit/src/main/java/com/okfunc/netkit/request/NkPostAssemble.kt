@@ -7,19 +7,19 @@ import okhttp3.RequestBody
 
 /**
  * Created by bm on 2017/11/15.
-            */
-            class NkPostAssemble<T> : NkRequestAssemble<T> {
-                override fun buildUrl(builder: Request.Builder, req: NkRequest<T>): String {
-                    val host = req.host ?: NetKit.globalConfig.host
-                    val path = if (host == null) req.path!! else "$host${req.path}"
-                    val sb = StringBuilder(path)
-                    if (NetKit.globalConfig.params.isNotEmpty()) {
-                        if (!sb.contains('?')) {
-                            sb.append('?')
-                        }
-                        if (sb.contains('&') && !sb.endsWith('&')) {
-                            sb.append('&')
-                        }
+ */
+class NkPostAssemble<T> : NkRequestAssemble<T> {
+    override fun buildUrl(builder: Request.Builder, req: NkRequest<T>): String {
+        val host = req.host ?: NetKit.globalConfig.host
+        val path = if (host == null) req.path!! else "$host${req.path}"
+        val sb = StringBuilder(path)
+        if (NetKit.globalConfig.params.isNotEmpty()) {
+            if (!sb.contains('?')) {
+                sb.append('?')
+            }
+            if (!sb.endsWith('&') && !sb.endsWith('?')) {
+                sb.append('&')
+            }
             NetKit.globalConfig.params.forEach {
                 sb.append(it.key)
                 sb.append('=')
