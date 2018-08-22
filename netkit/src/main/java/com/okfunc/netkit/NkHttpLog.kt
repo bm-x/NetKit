@@ -1,16 +1,21 @@
 package com.okfunc.netkit
 
+import android.os.Environment
 import android.util.Log
 import okhttp3.*
 import okio.Buffer
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.nio.charset.Charset
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * Created by clyde on 2017/11/18.
  */
 
-class NkHttpLog : Interceptor {
+class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : Interceptor {
 
     var TAG: String
 
@@ -22,12 +27,13 @@ class NkHttpLog : Interceptor {
         val request = chain.request()
 
         val t1 = System.nanoTime()
-        Log.i(TAG, "Sending request ${request.url()}\n${request.headers()}\n${reqBody(request)}")
+
+        val sendTxt = "Sending request ${request.url()}\n${request.headers()}\n${reqBody(request)}"
 
         val response = try {
             chain.proceed(request)
         } catch (ex: Throwable) {
-            Log.e(TAG, "request ${request.url()} error: $ex")
+            Log.e(TAG, writeToFile("${sendTxt}\n\nrequest ${request.url()} error: $ex\n-------------------------------------\n"))
             throw ex
         }
 
@@ -46,12 +52,22 @@ class NkHttpLog : Interceptor {
                     String(bytes)
                 }
             }
-        } else "maybe [binary body], omitted!"
+        } else "maybe [binary body] or empty, omitted!"
 
         val t2 = System.nanoTime()
-        Log.i(TAG, "Received response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms\n${response.headers()}\nbody : $body")
-
+        Log.i(TAG, writeToFile("${sendTxt}\n\nReceived response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms\n${response.headers()}\nbody : $body\n-------------------------------------\n"))
         return res
+    }
+
+    fun writeToFile(txt: String): String {
+        if (saveToFile) {
+            synchronized(lock) {
+                OutputStreamWriter(FileOutputStream(logpath, true), "utf-8").use {
+                    it.write(txt)
+                }
+            }
+        }
+        return txt
     }
 
     fun reqBody(req: Request): String {
@@ -60,15 +76,24 @@ class NkHttpLog : Interceptor {
             val buffer = Buffer()
             body.writeTo(buffer)
             return "body : ${buffer.readString(readCharset(req.body()?.contentType()))}"
-        } else return "body : maybe [binary body], omitted!"
+        } else return "body : maybe [binary body] or empty, omitted!"
     }
 
     fun readCharset(mt: MediaType?) = (mt?.charset(UTF8) ?: UTF8) ?: UTF8
 
-    fun isPlainText(mt: MediaType?) = ("text" == mt?.type()) || ("multipart" == mt?.type())
-            || (mt?.subtype()?.toLowerCase()?.let { it == "json" || it == "xml" || it == "html" || it == "x-www-form-urlencoded" || it == "form-data" }
-            ?: false)
+    fun isPlainText(mt: MediaType?) = when (mt?.type()?.toLowerCase()) {
+        "text" -> true
+        "multipart" -> true
+        else -> when (mt?.subtype()?.toLowerCase()) {
+            "json", "xml", "html", "x-www-form-urlencoded", "form-data" -> true
+            else -> false
+        }
+    }
 
     private val UTF8 = Charset.forName("UTF-8")
+
+    companion object {
+        private val lock = ""
+    }
 
 }

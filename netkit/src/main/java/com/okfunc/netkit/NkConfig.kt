@@ -1,9 +1,11 @@
 package com.okfunc.netkit
 
 import android.app.Application
+import android.os.Environment
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.request.NkRequest
+import java.io.File
 import kotlin.properties.Delegates
 
 /**
@@ -25,6 +27,12 @@ class NkConfig() {
     var host: String? = null
     var TAG = "netkit"
     var httpLog = false
+    var saveToFile = false
+    var logPath: File? = null
+        get() {
+            return if (saveToFile && field == null) File(Environment.getExternalStorageDirectory(), "httplog.txt")
+            else field
+        }
 
     fun application(app: Application) = also { application = app }
 

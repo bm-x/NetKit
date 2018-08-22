@@ -44,7 +44,7 @@ object NetKit {
 
     internal fun makeDefaultOkHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
-        if (globalConfig.httpLog) builder.addInterceptor(NkHttpLog())
+        if (globalConfig.httpLog) builder.addInterceptor(NkHttpLog(globalConfig.saveToFile, globalConfig.logPath))
         val client = builder.build();
         okHttpClient = client
         return client
