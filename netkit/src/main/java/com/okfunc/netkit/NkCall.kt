@@ -98,6 +98,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onError(ex: Throwable) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_ERROR) {
+
             if (it is KFunction<*>) callFunc(it, ex, bundle, req, ignore)
             else (it as? NK_ERROR<*>)?.invoke(ex, bundle, req, ignore)
             if (ignore.ignore) return
