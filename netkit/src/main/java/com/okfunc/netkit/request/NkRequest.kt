@@ -85,6 +85,12 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun url(host: String?, path: String?) = host(host).path(path)
 
+    fun url() = try {
+        fullPath
+    } catch (e: Throwable) {
+        "$host$path"
+    }
+
     fun header(header: NkHeaders) = also { header.copyTo(this.header) }
 
     fun header(key: String, value: String) = also { header.set(key, value) }
