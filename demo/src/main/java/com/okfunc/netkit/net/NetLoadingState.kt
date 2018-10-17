@@ -1,7 +1,5 @@
 package com.okfunc.netkit.net
 
-import android.app.Activity
-import android.app.Dialog
 import com.okfunc.netkit.NkBundle
 import com.okfunc.netkit.NkCallback
 import com.okfunc.netkit.request.NkRequest

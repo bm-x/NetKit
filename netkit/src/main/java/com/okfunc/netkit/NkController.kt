@@ -1,7 +1,5 @@
 package com.okfunc.netkit
 
-import android.os.Handler
-import android.os.Looper
 import com.okfunc.netkit.request.NkRequest
 
 /**

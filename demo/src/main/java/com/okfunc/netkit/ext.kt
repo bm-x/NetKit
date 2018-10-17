@@ -1,9 +1,9 @@
 package com.okfunc.netkit
 
-import com.nii.aoyouvpn.core.net.convert.ArrayConvert
-import com.nii.aoyouvpn.core.net.convert.ObjectConvert
 import com.okfunc.netkit.net.NetLoadingState
 import com.okfunc.netkit.net.ResponeBean
+import com.okfunc.netkit.net.convert.ArrayConvert
+import com.okfunc.netkit.net.convert.ObjectConvert
 import com.okfunc.netkit.net.error.DefaultErrorHandler
 import com.okfunc.netkit.net.error.ErrorHandler
 import com.okfunc.netkit.net.error.ServerStatusHandler

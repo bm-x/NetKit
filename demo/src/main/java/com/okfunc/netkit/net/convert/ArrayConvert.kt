@@ -1,4 +1,4 @@
-package com.nii.aoyouvpn.core.net.convert
+package com.okfunc.netkit.net.convert
 
 import com.alibaba.fastjson.JSON
 import com.okfunc.netkit.NkBundle
