@@ -1,6 +1,8 @@
 package com.okfunc.netkit
 
 /**
+ * NkIgnore
+ *
  * Created by bm on 2017/11/15.
  */
 class NkIgnore {

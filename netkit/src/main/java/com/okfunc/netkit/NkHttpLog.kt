@@ -10,9 +10,10 @@ import java.io.OutputStreamWriter
 import java.nio.charset.Charset
 
 /**
+ * NkHttpLog
+ *
  * Created by clyde on 2017/11/18.
  */
-
 class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : Interceptor {
 
     var TAG: String

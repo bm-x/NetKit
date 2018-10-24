@@ -5,7 +5,6 @@ import com.okfunc.netkit.request.NkRequest
 /**
  * Created by clyde on 2017/11/24.
  */
-
 object NkController {
 
     val queue = ArrayList<NkCall>(15)

@@ -11,7 +11,6 @@ import kotlin.properties.Delegates
 /**
  * Created by buck on 2017/11/8.
  */
-
 class NkConfig() {
 
     constructor(initBlock: NkConfig.() -> Unit) : this() {

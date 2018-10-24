@@ -6,7 +6,6 @@ import kotlin.collections.ArrayList
 /**
  * Created by buck on 2017/10/28.
  */
-
 open class NkHeaders(initCapacity: Int = 4) {
 
     protected val keys = ArrayList<String>(initCapacity)

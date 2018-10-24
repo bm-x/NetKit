@@ -3,7 +3,6 @@ package com.okfunc.netkit
 /**
  * Created by clyde on 2017/12/4.
  */
-
 class NkException : Exception {
     constructor() : super()
     constructor(message: String?) : super(message)
