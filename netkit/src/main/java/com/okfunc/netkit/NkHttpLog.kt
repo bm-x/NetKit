@@ -1,6 +1,5 @@
 package com.okfunc.netkit
 
-import android.os.Environment
 import android.util.Log
 import okhttp3.*
 import okio.Buffer
@@ -9,7 +8,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.Charset
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * Created by clyde on 2017/11/18.

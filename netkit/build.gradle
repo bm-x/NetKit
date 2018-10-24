@@ -10,7 +10,6 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
@@ -25,13 +24,29 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api 'com.squareup.okhttp3:okhttp:3.11.0'
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+ext {
+    bintrayRepo = 'Tools' // your repo name
+    bintrayName = 'netkit' // has to be same as your library module name
+    publishedGroupId = 'com.okfunc.netkit' // your module package name
+    libraryName = 'netkit'
+    artifact = 'netkit' // has to be same as your library module name
+    libraryDescription = 'A set of methods used for http'
+    siteUrl = 'https://github.com/bm-x/NetKit'
+    gitUrl = 'https://github.com/bm-x/NetKit.git'
+    libraryVersion = '1.0'
+    developerId = 'bm'
+    developerName = 'bm'
+    developerEmail = 'okfunc@okfunc.com'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+apply from: 'https://raw.githubusercontent.com/numetriclabz/jcenter/master/installv.gradle'
+apply from: 'https://raw.githubusercontent.com/numetriclabz/jcenter/master/bintrayv.gradle'
