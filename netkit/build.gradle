@@ -9,7 +9,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     buildTypes {
         debug {
@@ -30,23 +30,4 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:3.11.0'
 }
 
-ext {
-    bintrayRepo = 'Tools' // your repo name
-    bintrayName = 'netkit' // has to be same as your library module name
-    publishedGroupId = 'com.okfunc.netkit' // your module package name
-    libraryName = 'netkit'
-    artifact = 'netkit' // has to be same as your library module name
-    libraryDescription = 'A set of methods used for http'
-    siteUrl = 'https://github.com/bm-x/NetKit'
-    gitUrl = 'https://github.com/bm-x/NetKit.git'
-    libraryVersion = '1.0'
-    developerId = 'bm'
-    developerName = 'bm'
-    developerEmail = 'okfunc@okfunc.com'
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
-apply from: 'https://raw.githubusercontent.com/numetriclabz/jcenter/master/installv.gradle'
-apply from: 'https://raw.githubusercontent.com/numetriclabz/jcenter/master/bintrayv.gradle'
+apply from: './bintrayUpload.gradle'
