@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter
 import java.nio.charset.Charset
 
 /**
+ *
  * NkHttpLog
  *
  * Created by clyde on 2017/11/18.

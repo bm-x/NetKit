@@ -1,1 +1,1 @@
-include ':netkit',':demo'
+include ':netkit'

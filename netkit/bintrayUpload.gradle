@@ -22,6 +22,7 @@ def developerEmail = properties.getProperty("developer.email")
 
 def bintrayUser = properties.getProperty("bintray.user")
 def bintrayApikey = properties.getProperty("bintray.apikey")
+def bintrayRepo = properties.getProperty("bintray.repo")
 
 def javadocName = properties.getProperty("javadoc.name")
 
@@ -32,12 +33,14 @@ install {
     repositories.mavenInstaller {
         pom {
             project {
+                packaging "aar"
                 name projectName
                 groupId projectGroupId
                 artifactId projectArtifactId
                 version projectVersionName
                 packaging projectPackaging
                 url projectSiteUrl
+
                 licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'
@@ -50,11 +53,6 @@ install {
                         name developerName
                         email developerEmail
                     }
-                }
-                scm {
-                    connection projectGitUrl
-                    developerConnection projectGitUrl
-                    url projectSiteUrl
                 }
             }
         }
@@ -107,7 +105,8 @@ bintray {
     configurations = ['archives']
     publish = true
     pkg {
-        repo = "Tools"
+//        userOrg = properties.getProperty("bintray.userOrg")
+        repo = bintrayRepo
         name = projectName
         desc = 'Unbelievable HTTP Request Framework'
         websiteUrl = projectSiteUrl
