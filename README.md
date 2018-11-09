@@ -1,7 +1,7 @@
 #Netkit
 
 不喜欢什么retrofit，rxjava等等等等的网络请求方式了
-
+1
 我希望的请求方式是这样的~
 
 ```kotlin
