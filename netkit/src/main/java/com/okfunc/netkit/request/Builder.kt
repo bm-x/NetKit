@@ -1,7 +1,17 @@
 package com.okfunc.netkit.request
 
-import com.okfunc.netkit.get
-import java.lang.StringBuilder
+import com.okfunc.netkit.NkIgnore
+import com.okfunc.netkit.exception.NetkitForbidException
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.collections.filter
+import kotlin.collections.forEach
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.plusAssign
+import kotlin.collections.set
+import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
 interface IVirtualMap<K, V> {
@@ -9,7 +19,34 @@ interface IVirtualMap<K, V> {
     operator fun set(key: K, value: V)
 }
 
-open class VirtualMap : IVirtualMap<Any, Any?> {
+
+class NetKitFunctions {
+    val functions = mutableListOf<Pair<String, Function<*>>>()
+
+    operator fun getValue(netKitBuilder: NetKitRequest, property: KProperty<*>): Function<*> {
+        throw NetkitForbidException("The get() method is not allowed to be invoked on ${property.name} feild")
+    }
+
+    operator fun setValue(netKitBuilder: NetKitRequest, property: KProperty<*>, function: Function<*>) {
+        functions += property.name to function
+    }
+}
+
+class NetKitHeader : IVirtualMap<Any, Any?> {
+    var Accept by this
+    var Accept_Charset by this
+    var Accept_Encoding by this
+    var Accept_Language by this
+    var Authorization by this
+    var Connection by this
+    var Content_Length by this
+    var Cookie by this
+    var From by this
+    var Host by this
+    var If_Modified_Since by this
+    var Pragma by this
+    var Referer by this
+    var User_Agent by this
 
     val entrys = mutableListOf<Pair<String, String?>>()
 
@@ -43,27 +80,11 @@ open class VirtualMap : IVirtualMap<Any, Any?> {
     }
 }
 
-class NetKitHeader : VirtualMap() {
-    var Accept by this
-    var Accept_Charset by this
-    var Accept_Encoding by this
-    var Accept_Language by this
-    var Authorization by this
-    var Connection by this
-    var Content_Length by this
-    var Cookie by this
-    var From by this
-    var Host by this
-    var If_Modified_Since by this
-    var Pragma by this
-    var Referer by this
-    var User_Agent by this
-}
-
-class NetKitBuilder {
-
+class NetKitRequest {
     private var _header: NetKitHeader? = null
     private fun _getHeader() = _header ?: NetKitHeader().apply { _header = this }
+
+    private var _functions = NetKitFunctions()
 
     var url: String? = null
     var protocol: String? = null
@@ -76,7 +97,11 @@ class NetKitBuilder {
 
     var asynchronized = true
 
-    var success: Any = ""
+    var start: Function<*> by _functions
+    var before_success: Function<*> by _functions
+    var success: Function<*> by _functions
+    var error: Function<*> by _functions
+    var finish: Function<*> by _functions
 
     var header: (NetKitHeader.() -> Unit) = {}
         set(value) = _getHeader().value()
@@ -86,33 +111,71 @@ class NetKitBuilder {
         _getHeader()[key] = value
     }
 
+    val UI: ThreadMode get() = ThreadMode(ThreadMode.UI)
+    val Worker: ThreadMode get() = ThreadMode(ThreadMode.Worker)
+    val Thread: ThreadMode get() = ThreadMode(ThreadMode.Thread)
+
+    operator fun Executor.plus(target: ThreadMode): ThreadMode {
+        return ThreadMode(ThreadMode.Executor, this)
+    }
+
+    operator fun Executor.plus(target: Function<*>): Function<*> {
+        if (target is WrapFunction) {
+            target.threadMode = ThreadMode(ThreadMode.Executor, this)
+            return target
+        } else {
+            return WrapFunction(target, ThreadMode(ThreadMode.Executor, this))
+        }
+    }
 }
 
-fun Any.request(block: NetKitBuilder.() -> Unit) {
-    NetKitBuilder().block()
+class NetKitRespone<T : Any>(val block: NetKitRespone<T>.() -> Unit) : Function<T> {
+    val target: T by Delegates.notNull()
 }
 
+fun <T : Any> objectDecoration(block: NetKitRespone<T>.() -> Unit): Function<T> {
+    return NetKitRespone(block)
+}
+
+fun Any.request(block: NetKitRequest.() -> Unit) {
+    NetKitRequest().block()
+}
 
 fun request(method: String? = null,
             url: String? = null,
-            block: NetKitBuilder.() -> Unit) = NetKitBuilder().block()
+            block: NetKitRequest.() -> Unit) = NetKitRequest().block()
+
+val executors = Executors.newFixedThreadPool(3)
 
 fun main(args: Array<String>) {
-//    request {
-//        url = "http://www.baidu.com"
-//        query["name"] = "123"
-//        query["age"] = 18
-//        method = "GET"
-//
-//        header = {
-//            Accept = "xml"
-//            Accept = "html"
-//        }
-//
-//        success = {
-//
-//        }
-//
-//        println(header["Accept"])
-//    }
+
+    request {
+        url = "http://www.baidu.com"
+        query["name"] = "123"
+        query["age"] = 18
+        method = "GET"
+
+        asynchronized = false
+
+        header = {
+            Accept = "xml"
+            Accept = "html"
+        }
+
+        finish = executors + Thread + {
+
+        }
+
+        before_success = Worker + {
+
+        }
+
+        success = executors + UI + objectDecoration<NkIgnore> {
+
+        }
+
+        error = executors + {
+
+        }
+    }
 }
