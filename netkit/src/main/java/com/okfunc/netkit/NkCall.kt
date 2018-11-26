@@ -1,6 +1,5 @@
 package com.okfunc.netkit
 
-import android.util.Log
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.request.NkRequest
 import okhttp3.Call
@@ -11,7 +10,6 @@ import java.io.IOException
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
-import kotlin.reflect.jvm.javaType
 
 /**
  *
@@ -47,7 +45,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e)
 
     override fun onResponse(c: Call, res: Response) = try {
-        cachePolicy.onResponse(c, res) policy@ { call, response ->
+        cachePolicy.onResponse(c, res) policy@{ call, response ->
             bundle.okRespone(response)
             val ignore = NkIgnore()
             val result = req.convert.convertResponse(response, bundle, ignore)
@@ -78,8 +76,10 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onStart() {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_START) {
-            if (it is KFunction<*>) callFunc(it, req, ignore)
-            else (it as? NK_START<*>)?.invoke(req, ignore)
+            callFunc(
+                    func = it,
+                    fullArgs = arrayOf(req, ignore)
+            )
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onStart(req) }
@@ -126,11 +126,27 @@ class NkCall(val req: NkRequest<Any>) : Callback {
         req.callbacks.forEach { it.onSuccess(result, bundle, req, res) }
     }
 
+    fun callFunc(func: Function<*>, fullArgs: Array<*>) {
+        val cls = func.javaClass
+        val fullTypes = Array<Class<*>?>(fullArgs.size) { fullArgs[it]?.javaClass }
+
+        try {
+            val method = cls.getDeclaredMethod("invoke", *fullTypes)
+            method.invoke(func, fullArgs)
+        } catch (e: Throwable) {
+            matchCall(cls, func, fullTypes, fullArgs)
+        }
+    }
+
+    private fun matchCall(cls: Class<*>, func: Function<*>, fullCall: Array<Class<*>?>, fullArgs: Array<*>) {
+        cls.declaredMethods.filter { it.name=="invoke" }.
+    }
+
     fun callFunc(func: KFunction<*>, vararg args: Any) {
         val list = ArrayList<Any?>()
         func.parameters.forEachIndexed { index, fp ->
             list.add(null)
-            args.forEach p@ {
+            args.forEach p@{
                 val t = it::class.starProjectedType
                 if (t == fp.type || t.isSubtypeOf(fp.type) || t.classifier == fp.type.classifier) {
                     list[index] = it
