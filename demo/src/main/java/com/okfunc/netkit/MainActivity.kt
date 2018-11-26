@@ -14,8 +14,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         btn.setOnClickListener {
-            val x = this::abc
-            Log.i("buck", "${x.parameters}");
+            get("http://okfunc.com/record/bet/show").stringConvert()
+//                    .onSuccess { target, bundle, req, res, ignore ->
+//                        Log.d("clyde", "success $target")
+//                    }
+                    .success { target: String ->
+                        Log.d("clyde", "success ${target}")
+                    }
+                    .onFinish { req, ignore ->
+                        Log.d("clyde", "finish")
+                    }
+                    .end()
         }
     }
 
@@ -30,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     fun abc(name: String, age: Int) {
-
         // get https://www.api.com/example/get?key1=value1&key2=value2
         get("https://www.api.com/example/get").stringConvert()
                 .params("key1", "value1")

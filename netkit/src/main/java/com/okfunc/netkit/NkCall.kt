@@ -7,6 +7,7 @@ import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.starProjectedType
@@ -76,10 +77,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onStart() {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_START) {
-            callFunc(
-                    func = it,
-                    fullArgs = arrayOf(req, ignore)
-            )
+            callFunc(it, arrayOf(req, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onStart(req) }
@@ -88,8 +86,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onFinish() {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_FINISH) {
-            if (it is KFunction<*>) callFunc(it, req, ignore)
-            else (it as? NK_FINISH<*>)?.invoke(req, ignore)
+            callFunc(it, arrayOf(req, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onFinish(req) }
@@ -98,9 +95,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onError(ex: Throwable) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_ERROR) {
-
-            if (it is KFunction<*>) callFunc(it, ex, bundle, req, ignore)
-            else (it as? NK_ERROR<*>)?.invoke(ex, bundle, req, ignore)
+            callFunc(it, arrayOf(req, ex, bundle, req, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onError(ex, bundle, req) }
@@ -109,8 +104,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun beforeSuccess(result: Any, res: NkResponse) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_BEFORE_SUCCESS) {
-            if (it is KFunction<*>) callFunc(it, result, bundle, req, res, ignore)
-            else (it as? NK_BEFORE_SUCCESS<Any>)?.invoke(result, bundle, req, res, ignore)
+            callFunc(it, arrayOf(req, result, bundle, req, res, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.beforeSuccess(result, bundle, req, res) }
@@ -119,8 +113,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onSuccess(result: Any, res: NkResponse) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_SUCCESS) {
-            if (it is KFunction<*>) callFunc(it, result, bundle, req, res, ignore)
-            else (it as? NK_SUCCESS<Any>)?.invoke(result, bundle, req, res, ignore)
+            callFunc(it, arrayOf(req, result, bundle, req, res, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onSuccess(result, bundle, req, res) }
@@ -139,7 +132,29 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     }
 
     private fun matchCall(cls: Class<*>, func: Function<*>, fullCall: Array<Class<*>?>, fullArgs: Array<*>) {
-        cls.declaredMethods.filter { it.name=="invoke" }.
+        val method = cls.declaredMethods.filter { it.name == "invoke" && it.genericReturnType == Void.TYPE }.firstOrNull()
+                ?: return
+
+        val paramsTypes = method.genericParameterTypes
+
+        if (paramsTypes.isEmpty()) {
+            method.invoke(func)
+            return
+        }
+
+        val params = arrayOfNulls<Any?>(paramsTypes.size)
+
+        paramsTypes.forEachIndexed { index, paramsType ->
+            val clz: Class<*> = if (paramsType is ParameterizedType) {
+                paramsType.rawType as Class<*>
+            } else {
+                paramsType as Class<*>
+            }
+
+            params[index] = fullArgs.find { clz.isInstance(it) }
+        }
+
+        method.invoke(func, *params)
     }
 
     fun callFunc(func: KFunction<*>, vararg args: Any) {

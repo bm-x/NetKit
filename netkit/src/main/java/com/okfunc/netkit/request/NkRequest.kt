@@ -65,9 +65,9 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun onError(error: NK_ERROR<T>) = also { addfunc(K_ERROR, error) }
 
-    fun success(func: KFunction<Any>) = also { addfunc(K_SUCCESS, func) }
+    fun success(func: Function<*>) = also { addfunc(K_SUCCESS, func) }
 
-    fun start(func: KFunction<Any>) = also { addfunc(K_START, func) }
+    fun start(func: Function<*>) = also { addfunc(K_START, func) }
 
     fun finish(func: KFunction<Any>) = also { addfunc(K_FINISH, func) }
 
