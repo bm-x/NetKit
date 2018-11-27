@@ -4,10 +4,8 @@ import com.okfunc.netkit.*
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.convert.NkConvert
-import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.Request
-import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,7 +35,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     val callbacks = ArrayList<NkCallback<Any>>(2)
 
     val cKeys = ArrayList<String>(4)
-    val cValues = ArrayList<Any>(4)
+    val cValues = ArrayList<Function<*>>(4)
 
     var feedBackProgress = false
 
@@ -67,9 +65,9 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun onError(error: NK_ERROR<T>) = also { addfunc(K_ERROR, error) }
 
-    fun success(func: KFunction<Any>) = also { addfunc(K_SUCCESS, func) }
+    fun success(func: Function<*>) = also { addfunc(K_SUCCESS, func) }
 
-    fun start(func: KFunction<Any>) = also { addfunc(K_START, func) }
+    fun start(func: Function<*>) = also { addfunc(K_START, func) }
 
     fun finish(func: KFunction<Any>) = also { addfunc(K_FINISH, func) }
 
@@ -173,12 +171,12 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
         return n
     }
 
-    protected fun addfunc(key: String, func: Any) {
+    protected fun addfunc(key: String, func: Function<*>) {
         cKeys.add(key)
         cValues.add(func)
     }
 
-    inline internal fun eachFunc(key: String, block: (value: Any) -> Unit) {
+    inline internal fun eachFunc(key: String, block: (value: Function<*>) -> Unit) {
         cKeys.indices.forEach { if (cKeys[it] == key) block(cValues[it]) }
     }
 
