@@ -8,9 +8,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
-import kotlin.reflect.KFunction
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.starProjectedType
 
 /**
  *
@@ -132,7 +129,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     }
 
     private fun matchCall(cls: Class<*>, func: Function<*>, fullCall: Array<Class<*>?>, fullArgs: Array<*>) {
-        val method = cls.declaredMethods.filter { it.name == "invoke" && it.genericReturnType == Void.TYPE }.firstOrNull()
+        val method = cls.declaredMethods.filter { !it.isBridge && it.name == "invoke" }.firstOrNull()
                 ?: return
 
         val paramsTypes = method.genericParameterTypes
@@ -155,21 +152,5 @@ class NkCall(val req: NkRequest<Any>) : Callback {
         }
 
         method.invoke(func, *params)
-    }
-
-    fun callFunc(func: KFunction<*>, vararg args: Any) {
-        val list = ArrayList<Any?>()
-        func.parameters.forEachIndexed { index, fp ->
-            list.add(null)
-            args.forEach p@{
-                val t = it::class.starProjectedType
-                if (t == fp.type || t.isSubtypeOf(fp.type) || t.classifier == fp.type.classifier) {
-                    list[index] = it
-                    return@p
-                }
-            }
-        }
-
-        func.call(*Array(list.size) { list[it] })
     }
 }

@@ -4,7 +4,6 @@ import com.okfunc.netkit.NkCall
 import okhttp3.Call
 import okhttp3.Response
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 
 /**
  * Created by clyde on 2017/11/24.
@@ -22,6 +21,6 @@ enum class CachePolicy(internal var policy: KClass<out ICachePolicy>) {
     NONE(NonePolicy::class),
     STREAM_DIFF(StreamDiffPolicy::class);
 
-    internal fun policy() = policy.createInstance()
+    internal fun policy() = policy.java.newInstance()
 
 }

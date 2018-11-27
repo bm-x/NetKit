@@ -4,8 +4,8 @@ apply plugin: 'com.jfrog.bintray'
 // load properties
 Properties properties = new Properties()
 
-File localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) properties.load(localPropertiesFile.newDataInputStream())
+File projectPropertiesFile = project.file("project.properties")
+if (projectPropertiesFile.exists()) properties.load(projectPropertiesFile.newDataInputStream())
 
 // read properties
 def projectName = properties.getProperty("project.name")
@@ -23,6 +23,7 @@ def developerEmail = properties.getProperty("developer.email")
 def bintrayUser = properties.getProperty("bintray.user")
 def bintrayApikey = properties.getProperty("bintray.apikey")
 def bintrayRepo = properties.getProperty("bintray.repo")
+def bintrayUserOrg = properties.getProperty("bintray.userOrg")
 
 def javadocName = properties.getProperty("javadoc.name")
 
@@ -81,8 +82,8 @@ task classesJar(type: Jar) {
 }
 
 artifacts {
-    archives classesJar
-    archives javadocJar
+//    archives classesJar
+//    archives javadocJar
     archives sourcesJar
 }
 
