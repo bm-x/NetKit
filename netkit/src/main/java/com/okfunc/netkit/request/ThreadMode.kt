@@ -7,8 +7,8 @@ class ThreadMode(
         var executor: Executor? = null
 ) {
     companion object {
-        internal val UI = 1
-        internal val Worker = 2
+        internal val Default = 1
+        internal val UI = 2
         internal val Thread = 3
         internal val Executor = 4
     }

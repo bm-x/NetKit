@@ -129,28 +129,32 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     }
 
     private fun matchCall(cls: Class<*>, func: Function<*>, fullCall: Array<Class<*>?>, fullArgs: Array<*>) {
-        val method = cls.declaredMethods.filter { !it.isBridge && it.name == "invoke" }.firstOrNull()
-                ?: return
+        try {
+            val method = cls.declaredMethods.filter { !it.isBridge && it.name == "invoke" }.firstOrNull()
+                    ?: return
 
-        val paramsTypes = method.genericParameterTypes
+            val paramsTypes = method.genericParameterTypes
 
-        if (paramsTypes.isEmpty()) {
-            method.invoke(func)
-            return
-        }
-
-        val params = arrayOfNulls<Any?>(paramsTypes.size)
-
-        paramsTypes.forEachIndexed { index, paramsType ->
-            val clz: Class<*> = if (paramsType is ParameterizedType) {
-                paramsType.rawType as Class<*>
-            } else {
-                paramsType as Class<*>
+            if (paramsTypes.isEmpty()) {
+                method.invoke(func)
+                return
             }
 
-            params[index] = fullArgs.find { clz.isInstance(it) }
-        }
+            val params = arrayOfNulls<Any?>(paramsTypes.size)
 
-        method.invoke(func, *params)
+            paramsTypes.forEachIndexed { index, paramsType ->
+                val clz: Class<*> = if (paramsType is ParameterizedType) {
+                    paramsType.rawType as Class<*>
+                } else {
+                    paramsType as Class<*>
+                }
+
+                params[index] = fullArgs.find { clz.isInstance(it) }
+            }
+
+            method.invoke(func, *params)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
     }
 }

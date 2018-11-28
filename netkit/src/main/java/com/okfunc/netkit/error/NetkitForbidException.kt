@@ -1,4 +1,4 @@
-package com.okfunc.netkit.exception
+package com.okfunc.netkit.error
 
 import java.lang.RuntimeException
 

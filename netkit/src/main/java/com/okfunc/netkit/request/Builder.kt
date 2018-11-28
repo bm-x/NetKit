@@ -1,15 +1,9 @@
 package com.okfunc.netkit.request
 
 import com.okfunc.netkit.NkIgnore
-import com.okfunc.netkit.exception.NetkitForbidException
+import com.okfunc.netkit.error.NetkitForbidException
 import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.plusAssign
 import kotlin.collections.set
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -19,7 +13,6 @@ interface IVirtualMap<K, V> {
     operator fun set(key: K, value: V)
 }
 
-
 class NetKitFunctions {
     val functions = mutableListOf<Pair<String, Function<*>>>()
 
@@ -28,7 +21,10 @@ class NetKitFunctions {
     }
 
     operator fun setValue(netKitBuilder: NetKitRequest, property: KProperty<*>, function: Function<*>) {
-        functions += property.name to function
+        functions += property.name to (function as? WrapFunction ?: when (property.name) {
+            "before_success" -> WrapFunction(function, ThreadMode(ThreadMode.Default))
+            else -> WrapFunction(function, ThreadMode(ThreadMode.UI))
+        })
     }
 }
 
@@ -63,7 +59,7 @@ class NetKitHeader : IVirtualMap<Any, Any?> {
             val sb = StringBuilder()
             list.forEach {
                 sb.append(it.second)
-                sb.append('；')
+                sb.append(';')
             }
             sb.deleteCharAt(sb.length - 1)
             return sb.toString()
@@ -112,12 +108,8 @@ class NetKitRequest {
     }
 
     val UI: ThreadMode get() = ThreadMode(ThreadMode.UI)
-    val Worker: ThreadMode get() = ThreadMode(ThreadMode.Worker)
+    val Default: ThreadMode get() = ThreadMode(ThreadMode.Default)
     val Thread: ThreadMode get() = ThreadMode(ThreadMode.Thread)
-
-    operator fun Executor.plus(target: ThreadMode): ThreadMode {
-        return ThreadMode(ThreadMode.Executor, this)
-    }
 
     operator fun Executor.plus(target: Function<*>): Function<*> {
         if (target is WrapFunction) {
@@ -162,19 +154,19 @@ fun main(args: Array<String>) {
             Accept = "html"
         }
 
-        finish = executors + Thread + {
+        finish = executors + {
 
         }
 
-        before_success = Worker + {
+        before_success = Default + {
 
         }
 
-        success = executors + UI + objectDecoration<NkIgnore> {
+        success = UI + objectDecoration<NkIgnore> {
 
         }
 
-        error = executors + {
+        error = Thread + {
 
         }
     }
