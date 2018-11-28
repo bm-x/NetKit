@@ -1,16 +1,17 @@
 package com.okfunc.netkit.convert
 
-import com.okfunc.netkit.NkBundle
-import com.okfunc.netkit.NkIgnore
+import com.okfunc.netkit.core.NetKitRequest
+import com.okfunc.netkit.core.NetKitRespone
 import okhttp3.Response
 
-/**
- * Created by buck on 2017/11/2.
- */
-open class StringConvert : NkConvert<String> {
-    override fun convertResponse(response: Response, bundle: NkBundle, ignore: NkIgnore): String {
-        val data = response.body()?.string()
-        bundle.originData(data)
-        return data!!
+class StringConvert(
+        override var target: Function<*>?
+) : NetKitConvert, Function<Any> {
+
+    override fun onConvert(okResponse: Response, nkRequest: NetKitRequest, nkResponse: NetKitRespone<*>) {
+
     }
 }
+
+fun NetKitRequest.stringConvert(func: Function<*>) = StringConvert(func)
+fun NetKitRequest.stringConvert(func: (String) -> Unit) = StringConvert(func)
