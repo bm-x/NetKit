@@ -1,5 +1,6 @@
 package com.okfunc.netkit.core
 
+import com.okfunc.netkit.core.utils.IVirtualMap
 import kotlin.reflect.KProperty
 
 class NetKitHeader : IVirtualMap<Any, Any?> {

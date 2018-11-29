@@ -2,6 +2,7 @@ package com.okfunc.netkit.convert
 
 import com.okfunc.netkit.core.NetKitRequest
 import com.okfunc.netkit.core.NetKitRespone
+import com.okfunc.netkit.core.builder.NetkitFuncBuilder
 import okhttp3.Response
 
 class StringConvert(
@@ -13,5 +14,5 @@ class StringConvert(
     }
 }
 
-fun NetKitRequest.stringConvert(func: Function<*>) = StringConvert(func)
-fun NetKitRequest.stringConvert(func: (String) -> Unit) = StringConvert(func)
+fun NetkitFuncBuilder.stringConvert(func: Function<*>) = StringConvert(func)
+fun NetkitFuncBuilder.stringConvert(func: (String) -> Unit) = StringConvert(func)
