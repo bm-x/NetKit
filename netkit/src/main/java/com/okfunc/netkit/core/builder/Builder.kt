@@ -1,16 +1,16 @@
 package com.okfunc.netkit.core.builder
 
+import com.okfunc.netkit.MEDIA_TYPE_FORM_URLENCODED
+import com.okfunc.netkit.MEDIA_TYPE_PLAIN
 import com.okfunc.netkit.convert.stringConvert
 import com.okfunc.netkit.core.*
 import com.okfunc.netkit.core.utils.VirtualPairMap
-import okhttp3.HttpUrl
-import okhttp3.MediaType
-import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.*
 import okio.ByteString
 import java.io.File
 import java.lang.StringBuilder
 import java.net.URL
+import java.nio.charset.Charset
 import java.util.concurrent.Executors
 
 abstract class NetkitBuilder {
@@ -19,7 +19,7 @@ abstract class NetkitBuilder {
     abstract var host: String?
     abstract var port: Int?
     abstract var path: String?
-    abstract var method: String
+    abstract var method: String?
 
     abstract var content: Any?
     abstract var contentType: MediaType?
@@ -29,13 +29,7 @@ abstract class NetkitBuilder {
     internal abstract fun finish()
     internal abstract fun header(): NetKitHeader?
     internal abstract fun functions(): NetKitFunctions
-
-    companion object {
-        val MEDIA_TYPE_PLAIN get() = MediaType.parse("text/plain;charset=utf-8")
-        val MEDIA_TYPE_JSON get() = MediaType.parse("application/json;charset=utf-8")
-        val MEDIA_TYPE_STREAM get() = MediaType.parse("application/octet-stream")
-        val MEDIA_TYPE_FORM_URLENCODED get() = MediaType.parse("application/x-www-form-urlencoded")
-    }
+    internal abstract fun config(): NetkitConfig?
 }
 
 fun VirtualPairMap<*, *>.buildParams(): String {
@@ -75,6 +69,9 @@ internal fun buildNetkitRequest(nkBuilder: NetkitBuilder): NetKitRequest {
 
     okBuilder.method(nkBuilder.method, when (nkBuilder.method) {
         "POST" -> when {
+            nkBuilder.contentType == MEDIA_TYPE_FORM_URLENCODED -> {
+                FormBody.Builder(Charset.defaultCharset()).apply { }.build()
+            }
             nkBuilder.content != null && nkBuilder.contentType != null -> {
                 val content = nkBuilder.content
                 when (content) {
@@ -85,12 +82,10 @@ internal fun buildNetkitRequest(nkBuilder: NetkitBuilder): NetKitRequest {
                     else -> RequestBody.create(nkBuilder.contentType, "")
                 }
             }
-            else -> RequestBody.create(NetkitBuilder.MEDIA_TYPE_PLAIN, "")
+            else -> RequestBody.create(MEDIA_TYPE_PLAIN, "")
         }
         else -> null
     })
-
-    nkBuilder
 
     val request = okBuilder.build()
 

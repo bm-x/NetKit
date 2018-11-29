@@ -1,10 +1,9 @@
 package com.okfunc.netkit.core.builder
 
+import com.okfunc.netkit.MEDIA_TYPE_FORM_URLENCODED
+import com.okfunc.netkit.MEDIA_TYPE_JSON
 import com.okfunc.netkit.convert.NetKitConvert
-import com.okfunc.netkit.core.NetKitFunctions
-import com.okfunc.netkit.core.NetKitHeader
-import com.okfunc.netkit.core.ThreadMode
-import com.okfunc.netkit.core.WrapFunction
+import com.okfunc.netkit.core.*
 import com.okfunc.netkit.core.utils.VirtualPairMap
 import okhttp3.MediaType
 import java.util.concurrent.Executor
@@ -14,9 +13,22 @@ class NetkitFuncBuilder : NetkitBuilder() {
     private var _header: NetKitHeader? = null
     private fun _getHeader() = _header ?: NetKitHeader().apply { _header = this }
 
+    private var _config: NetkitConfig? = null
+
     private var _functions = NetKitFunctions()
 
     var convert: NetKitConvert? = null
+
+    var config: (NetkitConfig.() -> Unit)? = null
+        set(value) {
+            if (value == null) return
+            if (value is NetkitConfig) {
+                _config = value
+            } else {
+                if (_config == null) _config = NetkitConfig()
+                _config?.value()
+            }
+        }
 
     var autoStart = true
     var asynchronized = true
@@ -29,7 +41,7 @@ class NetkitFuncBuilder : NetkitBuilder() {
 
     override val query = VirtualPairMap<Any, Any?>()
 
-    override var method: String = "GET"
+    override var method: String? = null
 
     override var contentType: MediaType? = null
     override var content: Any? = null
@@ -87,4 +99,6 @@ class NetkitFuncBuilder : NetkitBuilder() {
     override fun functions() = _functions
 
     override fun header() = _header
+
+    override fun config() = _config
 }

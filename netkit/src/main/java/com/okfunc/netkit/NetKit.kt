@@ -1,4 +1,9 @@
-//package com.okfunc.netkit
+package com.okfunc.netkit
+
+import okhttp3.FormBody
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+
 //
 //import android.annotation.SuppressLint
 //import android.app.Activity
@@ -7,12 +12,24 @@
 //import okhttp3.OkHttpClient
 //
 //
-///**
-// *
-// * Created by buck on 2017/10/28.
-// */
-//@SuppressLint("StaticFieldLeak")
-//object NetKit {
+/**
+ *
+ * Created by buck on 2017/10/28.
+ */
+
+val MEDIA_TYPE_PLAIN get() = MediaType.parse("text/plain;charset=utf-8")
+val MEDIA_TYPE_JSON get() = MediaType.parse("application/json;charset=utf-8")
+val MEDIA_TYPE_STREAM get() = MediaType.parse("application/octet-stream")
+
+val NEDUA_TYPE_MIXED get() = MultipartBody.MIXED
+val NEDUA_TYPE_ALTERNATIVE get() = MultipartBody.ALTERNATIVE
+val NEDUA_TYPE_DIGEST get() = MultipartBody.DIGEST
+val NEDUA_TYPE_PARALLEL get() = MultipartBody.PARALLEL
+val NEDUA_TYPE_FORM get() = MultipartBody.FORM
+
+val MEDIA_TYPE_FORM_URLENCODED = MediaType.get("application/x-www-form-urlencoded")
+
+object NetKit {
 //
 //    var globalConfig: NkConfig = NkConfig()
 //        set(value) {
@@ -55,7 +72,7 @@
 //    }
 //
 //    internal fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
-//}
+}
 //
 //fun Any.post(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
 //fun Any.post(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }

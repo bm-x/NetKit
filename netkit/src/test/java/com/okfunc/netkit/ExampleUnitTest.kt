@@ -1,6 +1,7 @@
 package com.okfunc.netkit
 
 import com.alibaba.fastjson.JSON
+import com.okfunc.netkit.core.NetkitConfig
 import com.okfunc.netkit.core.builder.request
 import org.junit.Test
 
@@ -26,9 +27,18 @@ class ExampleUnitTest {
 
             method = "POST"
 
+            config = {
+
+            }
+
             json = JSON.toJSONString("")
 
             contentType = MEDIA_TYPE_PLAIN
         }
+    }
+
+    @Test
+    fun t2() {
+
     }
 }
