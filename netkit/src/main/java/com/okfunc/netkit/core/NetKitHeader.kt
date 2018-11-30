@@ -4,6 +4,7 @@ import com.okfunc.netkit.core.utils.IVirtualMap
 import kotlin.reflect.KProperty
 
 class NetKitHeader : IVirtualMap<Any, Any?> {
+
     var Accept by this
     var Accept_Charset by this
     var Accept_Encoding by this
@@ -19,7 +20,7 @@ class NetKitHeader : IVirtualMap<Any, Any?> {
     var Referer by this
     var User_Agent by this
 
-    val entrys = mutableListOf<Pair<String, String?>>()
+    internal val entrys = mutableListOf<Pair<String, String?>>()
 
     override fun set(key: Any, value: Any?) {
         entrys += key.toString() to value?.toString()
@@ -43,10 +44,10 @@ class NetKitHeader : IVirtualMap<Any, Any?> {
 
     private fun KProperty<*>.httpHeaderName() = name.replace('_', '-')
 
-    operator fun getValue(netKitHeader: NetKitHeader, property: KProperty<*>) =
+    operator fun getValue(target: Any, property: KProperty<*>) =
             get(property.httpHeaderName()) as? String
 
-    operator fun setValue(netKitHeader: NetKitHeader, property: KProperty<*>, s: Any?) {
+    operator fun setValue(target: Any, property: KProperty<*>, s: Any?) {
         set(property.httpHeaderName(), s)
     }
 }

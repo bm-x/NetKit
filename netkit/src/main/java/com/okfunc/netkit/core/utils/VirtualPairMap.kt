@@ -2,7 +2,7 @@ package com.okfunc.netkit.core.utils
 
 open class VirtualPairMap<K, V>(initialCapacity: Int = 5) : IVirtualMap<K, V> {
 
-    private val list = ArrayList<Pair<K, V>>(initialCapacity)
+    internal val list = ArrayList<Pair<K, V>>(initialCapacity)
 
     fun isEmpty() = list.isEmpty()
 

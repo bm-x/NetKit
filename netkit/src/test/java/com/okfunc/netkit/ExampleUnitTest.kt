@@ -1,7 +1,7 @@
 package com.okfunc.netkit
 
 import com.alibaba.fastjson.JSON
-import com.okfunc.netkit.core.NetkitConfig
+import com.okfunc.netkit.convert.stringConvert
 import com.okfunc.netkit.core.builder.request
 import org.junit.Test
 
@@ -13,6 +13,14 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
+
+        request {
+            path = "index.html"
+            success = stringConvert {
+
+            }
+        }
+
         request {
             url = "://baiud.com/aaa"
             protocol = "http"
@@ -28,6 +36,14 @@ class ExampleUnitTest {
             method = "POST"
 
             config = {
+
+            }
+
+            start { req, res ->
+
+            }
+
+            header = {
 
             }
 

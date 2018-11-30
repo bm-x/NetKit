@@ -1,5 +1,6 @@
 package com.okfunc.netkit
 
+import com.okfunc.netkit.core.NetkitConfig
 import okhttp3.FormBody
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -21,15 +22,14 @@ val MEDIA_TYPE_PLAIN get() = MediaType.parse("text/plain;charset=utf-8")
 val MEDIA_TYPE_JSON get() = MediaType.parse("application/json;charset=utf-8")
 val MEDIA_TYPE_STREAM get() = MediaType.parse("application/octet-stream")
 
-val NEDUA_TYPE_MIXED get() = MultipartBody.MIXED
-val NEDUA_TYPE_ALTERNATIVE get() = MultipartBody.ALTERNATIVE
-val NEDUA_TYPE_DIGEST get() = MultipartBody.DIGEST
-val NEDUA_TYPE_PARALLEL get() = MultipartBody.PARALLEL
-val NEDUA_TYPE_FORM get() = MultipartBody.FORM
+val MEDIA_TYPE_FORM get() = MultipartBody.FORM
 
 val MEDIA_TYPE_FORM_URLENCODED = MediaType.get("application/x-www-form-urlencoded")
 
 object NetKit {
+
+    var globalConfig: NetkitConfig? = null
+
 //
 //    var globalConfig: NkConfig = NkConfig()
 //        set(value) {

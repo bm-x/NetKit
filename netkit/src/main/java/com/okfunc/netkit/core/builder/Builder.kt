@@ -1,15 +1,15 @@
 package com.okfunc.netkit.core.builder
 
+import com.okfunc.netkit.MEDIA_TYPE_FORM
 import com.okfunc.netkit.MEDIA_TYPE_FORM_URLENCODED
 import com.okfunc.netkit.MEDIA_TYPE_PLAIN
+import com.okfunc.netkit.MEDIA_TYPE_STREAM
 import com.okfunc.netkit.convert.stringConvert
 import com.okfunc.netkit.core.*
 import com.okfunc.netkit.core.utils.VirtualPairMap
 import okhttp3.*
 import okio.ByteString
 import java.io.File
-import java.lang.StringBuilder
-import java.net.URL
 import java.nio.charset.Charset
 import java.util.concurrent.Executors
 
@@ -25,6 +25,11 @@ abstract class NetkitBuilder {
     abstract var contentType: MediaType?
 
     abstract val query: VirtualPairMap<Any, Any?>
+
+    abstract val params: VirtualPairMap<Any, Any?>
+
+    abstract var autoStart: Boolean?
+    abstract var asynchronized: Boolean?
 
     internal abstract fun finish()
     internal abstract fun header(): NetKitHeader?
@@ -61,16 +66,36 @@ internal fun buildNetkitRequest(nkBuilder: NetkitBuilder): NetKitRequest {
         builder
     }
 
+    nkBuilder.header()?.entrys?.forEach {
+        okBuilder.addHeader(it.first, it.second ?: "")
+    }
+
     nkBuilder.query.foreach {
         urlBuilder.addQueryParameter(it.first.toString(), it.second?.toString())
     }
 
     okBuilder.url(urlBuilder.build())
 
-    okBuilder.method(nkBuilder.method, when (nkBuilder.method) {
+    okBuilder.method(nkBuilder.method ?: "GET", when (nkBuilder.method) {
         "POST" -> when {
+            nkBuilder.content is RequestBody -> {
+                nkBuilder.content as RequestBody
+            }
             nkBuilder.contentType == MEDIA_TYPE_FORM_URLENCODED -> {
-                FormBody.Builder(Charset.defaultCharset()).apply { }.build()
+                val fb = FormBody.Builder(Charset.defaultCharset());
+                nkBuilder.params.foreach {
+                    fb.add(it.first.toString(), it.second?.toString() ?: "")
+                }
+                fb.build()
+            }
+            nkBuilder.contentType == MEDIA_TYPE_FORM -> {
+                val fb = MultipartBody.Builder()
+                nkBuilder.params.foreach {
+                    val second = it.second
+                    if (second is File) fb.addFormDataPart(it.first.toString(), second.name, RequestBody.create(MEDIA_TYPE_STREAM, second))
+                    else fb.addFormDataPart(it.first.toString(), second?.toString() ?: "")
+                }
+                fb.build()
             }
             nkBuilder.content != null && nkBuilder.contentType != null -> {
                 val content = nkBuilder.content

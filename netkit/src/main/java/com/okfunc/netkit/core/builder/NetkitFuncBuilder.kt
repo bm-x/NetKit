@@ -1,25 +1,31 @@
 package com.okfunc.netkit.core.builder
 
-import com.okfunc.netkit.MEDIA_TYPE_FORM_URLENCODED
-import com.okfunc.netkit.MEDIA_TYPE_JSON
+import android.media.MediaDrm
+import com.okfunc.netkit.*
 import com.okfunc.netkit.convert.NetKitConvert
 import com.okfunc.netkit.core.*
+import com.okfunc.netkit.core.utils.IVirtualMap
 import com.okfunc.netkit.core.utils.VirtualPairMap
 import okhttp3.MediaType
 import java.util.concurrent.Executor
 
 class NetkitFuncBuilder : NetkitBuilder() {
 
-    private var _header: NetKitHeader? = null
-    private fun _getHeader() = _header ?: NetKitHeader().apply { _header = this }
+    private var _header = NetKitHeader()
 
     private var _config: NetkitConfig? = null
 
     private var _functions = NetKitFunctions()
 
-    var convert: NetKitConvert? = null
+    var header: (NetKitHeader.() -> Unit) = {}
+        set(value) = _header.value()
 
-    var config: (NetkitConfig.() -> Unit)? = null
+    operator fun (NetKitHeader.() -> Unit).get(key: Any) = _header[key]
+    operator fun (NetKitHeader.() -> Unit).set(key: Any, value: Any?) {
+        _header[key] = value
+    }
+
+    var config: (NetkitConfig.() -> Unit)? = {}
         set(value) {
             if (value == null) return
             if (value is NetkitConfig) {
@@ -30,8 +36,10 @@ class NetkitFuncBuilder : NetkitBuilder() {
             }
         }
 
-    var autoStart = true
-    var asynchronized = true
+    var convert: NetKitConvert? = null
+
+    override var autoStart: Boolean? = null
+    override var asynchronized: Boolean? = null
 
     override var url: String? = null
     override var protocol: String? = null
@@ -46,7 +54,23 @@ class NetkitFuncBuilder : NetkitBuilder() {
     override var contentType: MediaType? = null
     override var content: Any? = null
 
-    val params = VirtualPairMap<String, Any?>(0)
+    override val params = VirtualPairMap<Any, Any?>(0)
+
+    val form = object : IVirtualMap<Any, Any?> {
+        override fun get(key: Any) = params[key]
+        override fun set(key: Any, value: Any?) {
+            params[key] = value
+            contentType = MEDIA_TYPE_FORM_URLENCODED
+        }
+    }
+
+    val multipartForm = object : IVirtualMap<Any, Any?> {
+        override fun get(key: Any) = params[key]
+        override fun set(key: Any, value: Any?) {
+            params[key] = value
+            contentType = MEDIA_TYPE_FORM
+        }
+    }
 
     var json: String?
         get() = content as? String
@@ -61,13 +85,7 @@ class NetkitFuncBuilder : NetkitBuilder() {
     var error: Function<*> by _functions
     var finish: Function<*> by _functions
 
-    var header: (NetKitHeader.() -> Unit) = {}
-        set(value) = _getHeader().value()
-
-    operator fun (NetKitHeader.() -> Unit).get(key: Any) = _getHeader()[key]
-    operator fun (NetKitHeader.() -> Unit).set(key: Any, value: Any?) {
-        _getHeader()[key] = value
-    }
+    fun start(func: (req: MediaDrm.KeyRequest, res: NkResponse) -> Unit) = _functions.setValue(this, start::javaClass, func)
 
     val UI: ThreadMode get() = ThreadMode(ThreadMode.UI)
     val Default: ThreadMode get() = ThreadMode(ThreadMode.Default)
@@ -94,6 +112,26 @@ class NetkitFuncBuilder : NetkitBuilder() {
             content = params.buildParams()
             contentType = MEDIA_TYPE_FORM_URLENCODED
         }
+
+        if (_config == null) _config = NetKit.globalConfig
+
+        val config = _config ?: return
+
+        if (url == null) url = config.url
+        if (protocol == null) protocol = config.protocol
+        if (host == null) host = config.host
+        if (port == null) port = config.port
+        if (path == null) path = config.path
+        if (method == null) method = config.method
+        if (contentType == null) contentType = config.contentType
+
+        _header.entrys.addAll(config.header.entrys)
+        query.list.addAll(config.query.list)
+        params.list.addAll(config.params.list)
+
+        if (convert == null) convert = config.convert
+        if (autoStart == null) autoStart = config.autoStart
+        if (asynchronized == null) asynchronized = config.asynchronized
     }
 
     override fun functions() = _functions
