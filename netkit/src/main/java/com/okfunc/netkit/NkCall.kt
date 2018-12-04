@@ -92,7 +92,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onError(ex: Throwable) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_ERROR) {
-            callFunc(it, arrayOf(req, ex, bundle, req, ignore))
+            callFunc(it, arrayOf(ex, bundle, req, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onError(ex, bundle, req) }
@@ -101,7 +101,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun beforeSuccess(result: Any, res: NkResponse) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_BEFORE_SUCCESS) {
-            callFunc(it, arrayOf(req, result, bundle, req, res, ignore))
+            callFunc(it, arrayOf(result, bundle, req, res, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.beforeSuccess(result, bundle, req, res) }
@@ -110,7 +110,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     fun onSuccess(result: Any, res: NkResponse) {
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_SUCCESS) {
-            callFunc(it, arrayOf(req, result, bundle, req, res, ignore))
+            callFunc(it, arrayOf(result, bundle, req, res, ignore))
             if (ignore.ignore) return
         }
         req.callbacks.forEach { it.onSuccess(result, bundle, req, res) }
