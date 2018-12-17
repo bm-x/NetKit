@@ -1,9 +1,11 @@
 package com.okfunc.netkit.request
 
+import com.okfunc.netkit.MEDIA_TYPE_STREAM
 import com.okfunc.netkit.NetKit
 import okhttp3.MultipartBody
 import okhttp3.Request
 import okhttp3.RequestBody
+import java.io.File
 
 /**
  * Created by bm on 2017/11/15.
@@ -42,9 +44,14 @@ class NkPostAssemble<T> : NkRequestAssemble<T> {
             }
         } else if (req.multipart != null) {
             builder.post(MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .also {
-                        req.multipart?.forEach { key, value ->
-                            it.addFormDataPart(key, value)
+                    .also { b ->
+                        req.multipart?.forEach {
+                            val second = it.second
+                            if (second is File) {
+                                b.addFormDataPart(it.first, second.name, RequestBody.create(MEDIA_TYPE_STREAM, second))
+                            } else {
+                                b.addFormDataPart(it.first, second.toString())
+                            }
                         }
                     }.build())
         }

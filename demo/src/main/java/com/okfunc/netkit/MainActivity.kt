@@ -8,6 +8,7 @@ import com.okfunc.netkit.bean.ResponeWrap
 import com.okfunc.netkit.request.NkRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,18 +16,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        NetKit.globalConfig.httpLog = true
+
+        val file = File(filesDir, "aad.txt")
+        file.writeText("12322222222")
+
         btn.setOnClickListener {
-            get("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
-//                    .onSuccess { target, bundle, req, res, ignore ->
-//                        Log.d("clyde", "success $target")
-//                    }
-                    .success { target: ResponeWrap<List<Record>> ->
-                        Log.d("clyde", "code ${target.code}   msg ${target.msg}  ${target.page.size}")
-                    }
-                    .onFinish { req, ignore ->
-                        Log.d("clyde", "finish")
-                    }
+            post("http://www.baidu.com/").stringConvert()
+                    .multipart("aaa", "111")
+                    .multipart("bbb", "222")
+                    .multipart("file", file)
                     .end()
+
+//            post("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
+////                    .onSuccess { target, bundle, req, res, ignore ->
+////                        Log.d("clyde", "success $target")
+////                    }
+//                    .success { target: ResponeWrap<List<Record>> ->
+//                        Log.d("clyde", "code ${target.code}   msg ${target.msg}  ${target.page.size}")
+//                    }
+//                    .onFinish { req, ignore ->
+//                        Log.d("clyde", "finish")
+//                    }
+//                    .end()
         }
     }
 

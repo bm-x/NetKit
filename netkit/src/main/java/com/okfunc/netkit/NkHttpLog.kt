@@ -74,7 +74,25 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
         if (isPlainText(req.body()?.contentType())) {
             val body = req.body() ?: return "body : request body is null"
             val buffer = Buffer()
-            body.writeTo(buffer)
+            if (body is MultipartBody && body.size() != 0) {
+                body.parts().forEach {
+                    buffer.write(body.boundary().toByteArray())
+                    buffer.write(NEW_LINE)
+
+                    buffer.write(it.headers().toString().toByteArray())
+                    buffer.write(NEW_LINE)
+
+                    if (it.body().contentType() == MEDIA_TYPE_STREAM) {
+                        buffer.write("maybe [binary body] or empty, omitted!\n".toByteArray())
+                    } else {
+                        it.body().writeTo(buffer)
+                        buffer.write(NEW_LINE)
+                    }
+                }
+                buffer.write(body.boundary().toByteArray())
+            } else {
+                body.writeTo(buffer)
+            }
             return "body : ${buffer.readString(readCharset(req.body()?.contentType()))}"
         } else return "body : maybe [binary body] or empty, omitted!"
     }
@@ -94,6 +112,7 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
 
     companion object {
         private val lock = ""
+        private val NEW_LINE = "\n".toByteArray()
     }
 
 }

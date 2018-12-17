@@ -27,7 +27,7 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     val header = NkHeaders()
     val params = HashMap<String, Any>()
-    var multipart: NkHeaders? = null
+    var multipart: MutableList<Pair<String, Any>>? = null
 
     var postContent: String? = null
     var mediaType: MediaType? = null
@@ -104,9 +104,9 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun multipart(key: String, value: Any) = also {
         if (multipart == null) {
-            multipart = NkHeaders()
+            multipart = mutableListOf()
         }
-        multipart?.add(key, value.toString())
+        multipart?.add(key to value)
     }
 
     fun get() = also { requestAssemble = NkGetAssemble<T>() }
