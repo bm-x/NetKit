@@ -13,7 +13,8 @@
 
         header = {
             Accept = "xml"
-            Accept = "html"
+            Accept_Encoding = "utf8"
+            Content_Length = 128
         }
 
         // 通过简单的加号链接，随意制定方法回调的运行线程 Default：默认线程   UI：ui线程  executors：指定某个线程池  Thread：另起线程
