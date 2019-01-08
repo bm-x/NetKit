@@ -35,3 +35,11 @@
         }
     }
 ```
+兼容的1.0方式
+  // get https://www.api.com/example/get?key1=value1&key2=value2
+  get("https://www.api.com/example/get").stringConvert()
+          .params("key1","value1")
+          .params("key2","value2")
+          .onSuccess { target, bundle, req, res, ignore -> }
+          .end()
+ 
