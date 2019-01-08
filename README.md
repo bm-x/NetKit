@@ -1,6 +1,6 @@
 #Netkit
 
-##New
+##致力于提供一种更加简洁、高效、明朗的网络请求库
 
 ```kotlin
     request {
