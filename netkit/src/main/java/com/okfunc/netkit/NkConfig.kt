@@ -1,6 +1,7 @@
 package com.okfunc.netkit
 
 import android.app.Application
+import android.content.Context
 import android.os.Environment
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
@@ -32,6 +33,9 @@ class NkConfig() {
             return if (saveToFile && field == null) File(Environment.getExternalStorageDirectory(), "httplog.txt")
             else field
         }
+
+    fun setDebug(ctx: Context, def: Boolean) {
+    }
 
     fun application(app: Application) = also { application = app }
 

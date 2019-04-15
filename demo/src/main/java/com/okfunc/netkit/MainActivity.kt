@@ -1,6 +1,7 @@
 package com.okfunc.netkit
 
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.okfunc.netkit.bean.Record
@@ -18,15 +19,18 @@ class MainActivity : AppCompatActivity() {
 
         NetKit.globalConfig.httpLog = true
 
-        val file = File(filesDir, "aad.txt")
-        file.writeText("12322222222")
-
         btn.setOnClickListener {
-            post("http://www.baidu.com/").stringConvert()
-                    .multipart("aaa", "111")
-                    .multipart("bbb", "222")
-                    .multipart("file", file)
-                    .end()
+
+            try {
+                // val file = getExternalFilesDir(null)
+                val file = File(Environment.getExternalStorageDirectory(), "Android")
+                val okfunc = File(file, "okfunc")
+                okfunc.mkdirs()
+                File(okfunc, "${packageName}.debug").writeText("true")
+                Log.i("clyde", file.absolutePath)
+            } catch (e: Throwable) {
+                Log.e("clyde", "", e)
+            }
 
 //            post("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
 ////                    .onSuccess { target, bundle, req, res, ignore ->

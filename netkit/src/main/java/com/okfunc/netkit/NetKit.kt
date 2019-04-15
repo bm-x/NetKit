@@ -3,8 +3,10 @@ package com.okfunc.netkit
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.os.Environment
 import android.support.v4.app.Fragment
 import okhttp3.OkHttpClient
+import java.io.File
 
 
 /**
@@ -18,6 +20,7 @@ object NetKit {
         set(value) {
             if (value.application == null) value.application = field.application
             field = value
+            clearOkHttpClient()
         }
 
     var okHttpClient: OkHttpClient? = null
