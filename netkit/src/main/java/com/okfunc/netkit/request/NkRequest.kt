@@ -111,7 +111,10 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun get() = also { requestAssemble = NkGetAssemble<T>() }
 
-    fun post() = also { requestAssemble = NkPostAssemble<T>() }
+    fun post() = also {
+        requestAssemble = NkPostAssemble<T>()
+        mediaType = MEDIA_TYPE_FORM_URLENCODED
+    }
 
     fun json(json: String) = also {
         mediaType = MEDIA_TYPE_JSON
