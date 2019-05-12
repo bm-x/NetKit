@@ -1,7 +1,9 @@
 package com.okfunc.netkit.request
 
+import com.okfunc.netkit.MEDIA_TYPE_PLAIN
 import com.okfunc.netkit.MEDIA_TYPE_STREAM
 import com.okfunc.netkit.NetKit
+import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -54,6 +56,8 @@ class NkPostAssemble<T> : NkRequestAssemble<T> {
                             }
                         }
                     }.build())
+        } else {
+            builder.post(RequestBody.create(MEDIA_TYPE_PLAIN, ""))
         }
         if (req.mediaType != null) {
             builder.addHeader("Content-Type", req.mediaType?.toString())

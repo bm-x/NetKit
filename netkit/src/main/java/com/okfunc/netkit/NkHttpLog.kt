@@ -28,7 +28,7 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
 
         val t1 = System.nanoTime()
 
-        val sendTxt = "Sending request ${request.url()}\n${request.headers()}\n${reqBody(request)}"
+        val sendTxt = "Sending request [${request.method()}] ${request.url()}\n${request.headers()}\n${reqBody(request)}"
 
         val response = try {
             chain.proceed(request)
