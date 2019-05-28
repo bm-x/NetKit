@@ -57,7 +57,7 @@ object NetKit {
         return client
     }
 
-    internal fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
+    fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
 }
 
 fun Any.post(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
