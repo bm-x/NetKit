@@ -20,6 +20,7 @@ class NetkitFuncBuilder : NetkitBuilder() {
     var header: (NetKitHeader.() -> Unit) = {}
         set(value) = _header.value()
 
+    var (NetKitHeader.() -> Unit).Accept by _header
     operator fun (NetKitHeader.() -> Unit).get(key: Any) = _header[key]
     operator fun (NetKitHeader.() -> Unit).set(key: Any, value: Any?) {
         _header[key] = value
@@ -27,6 +28,7 @@ class NetkitFuncBuilder : NetkitBuilder() {
 
     var config: (NetkitConfig.() -> Unit)? = {}
         set(value) {
+            field = value
             if (value == null) return
             if (value is NetkitConfig) {
                 _config = value

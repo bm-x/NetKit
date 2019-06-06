@@ -157,6 +157,10 @@ fun main(args: Array<String>) {
             Accept = "html"
         }
 
+        success = {
+
+        }
+
         success = key("success1") + UI + {
 
         }
@@ -184,8 +188,10 @@ fun main(args: Array<String>) {
 
     request {
         url = "baidu.com"
-        success = stringConvert {
+        success = UI + stringConvert {
 
         }
+        header.Accept = "json"
+
     }
 }
