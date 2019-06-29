@@ -11,23 +11,16 @@ class NkGetAssemble<T> : NkRequestAssemble<T> {
         val host = req.host ?: NetKit.globalConfig.host
         val path = if (host == null) req.path!! else "$host${req.path}"
         val sb = StringBuilder(path)
-        if (NetKit.globalConfig.params.isNotEmpty()) req.params.putAll(NetKit.globalConfig.params)
-        if (req.params.isNotEmpty()) {
+        if (NetKit.globalConfig.querys.isNotEmpty()) req.querys.putAll(NetKit.globalConfig.querys)
+        if (req.querys.isNotEmpty()) {
             if (!sb.contains('?')) {
                 sb.append('?')
             }
             if (sb.contains('&') && !sb.endsWith('&')) {
                 sb.append('&')
             }
-            for ((key, value) in req.params) {
-                sb.append(key)
-                sb.append('=')
-                sb.append(value)
-                sb.append('&')
-            }
-            sb.deleteCharAt(sb.length - 1)
+            sb.append(buildParamsString(req.querys))
         }
-
         return sb.toString()
     }
 

@@ -3,7 +3,6 @@ package com.okfunc.netkit.request
 import com.okfunc.netkit.MEDIA_TYPE_PLAIN
 import com.okfunc.netkit.MEDIA_TYPE_STREAM
 import com.okfunc.netkit.NetKit
-import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -17,22 +16,15 @@ class NkPostAssemble<T> : NkRequestAssemble<T> {
         val host = req.host ?: NetKit.globalConfig.host
         val path = if (host == null) req.path!! else "$host${req.path}"
         val sb = StringBuilder(path)
-        if (NetKit.globalConfig.params.isNotEmpty()) {
+        if (NetKit.globalConfig.querys.isNotEmpty()) req.querys.putAll(NetKit.globalConfig.querys)
+        if (req.querys.isNotEmpty()) {
             if (!sb.contains('?')) {
                 sb.append('?')
             }
             if (!sb.endsWith('&') && !sb.endsWith('?')) {
                 sb.append('&')
             }
-            NetKit.globalConfig.params.forEach {
-                sb.append(it.key)
-                sb.append('=')
-                sb.append(it.value)
-                sb.append('&')
-            }
-            if (sb.endsWith('&')) {
-                sb.deleteCharAt(sb.length - 1)
-            }
+            sb.append(buildParamsString(req.querys))
         }
         return sb.toString()
     }
@@ -40,7 +32,7 @@ class NkPostAssemble<T> : NkRequestAssemble<T> {
     override fun assemble(builder: Request.Builder, req: NkRequest<T>) {
         if (req.mediaType != null && (req.params.isNotEmpty() || req.postContent != null)) {
             if (req.params.isNotEmpty()) {
-                builder.post(RequestBody.create(req.mediaType, buildParamsContent(req.params)))
+                builder.post(RequestBody.create(req.mediaType, buildParamsString(req.params)))
             } else if (req.postContent != null) {
                 builder.post(RequestBody.create(req.mediaType, req.postContent))
             }
@@ -62,19 +54,5 @@ class NkPostAssemble<T> : NkRequestAssemble<T> {
         if (req.mediaType != null) {
             builder.addHeader("Content-Type", req.mediaType?.toString())
         }
-    }
-
-    fun buildParamsContent(map: HashMap<String, Any>): String {
-        val sb = StringBuilder()
-        map.forEach {
-            sb.append(it.key)
-            sb.append('=')
-            sb.append(it.value)
-            sb.append('&')
-        }
-        if (sb.endsWith('&')) {
-            sb.deleteCharAt(sb.length - 1)
-        }
-        return sb.toString()
     }
 }

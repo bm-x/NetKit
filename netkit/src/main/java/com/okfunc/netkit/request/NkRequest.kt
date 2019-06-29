@@ -4,6 +4,7 @@ import com.okfunc.netkit.*
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.convert.NkConvert
+import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.Request
 import java.net.URLEncoder
@@ -26,7 +27,8 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     var path: String? = null
 
     val header = NkHeaders()
-    val params = HashMap<String, Any>()
+    val querys = HashMap<String, Any?>()
+    val params = HashMap<String, Any?>()
     var multipart: MutableList<Pair<String, Any>>? = null
 
     var postContent: String? = null
@@ -97,9 +99,13 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun addOnHeader(key: String, value: String) = also { header.addOn(key, value) }
 
-    fun params(key: String, value: Any) = also {
+    fun params(key: String, value: Any?) = also {
         mediaType = MEDIA_TYPE_FORM_URLENCODED
         params[key] = value
+    }
+
+    fun querys(key: String, value: Any?) = also {
+        querys[key] = value
     }
 
     fun multipart(key: String, value: Any) = also {
@@ -127,41 +133,17 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
 
     fun buildOkRequest(): Request {
         val builder = Request.Builder()
-        header.copyTo(builder)
         val assemble: NkRequestAssemble<T> = requestAssemble ?: NkGetAssemble<T>()
         fullPath = assemble.buildUrl(builder, this)
         encodeFullPath = URLEncoder.encode(fullPath)
-        builder.url(fullPath)
+        builder.url(HttpUrl.get(fullPath))
+        header.copyTo(builder)
         assemble.assemble(builder, this)
         return builder.build()
     }
 
     internal var fullPath: String by Delegates.notNull()
     internal var encodeFullPath: String by Delegates.notNull()
-
-    protected fun buildUrl(): String {
-        val host = host ?: NetKit.globalConfig.host
-        val path = if (host == null) path!! else "$host${path}"
-        val sb = StringBuilder(path)
-        if (NetKit.globalConfig.params.isNotEmpty()) params.putAll(NetKit.globalConfig.params)
-        if (params.isNotEmpty()) {
-            if (!sb.contains('?')) {
-                sb.append('?')
-            }
-            if (!sb.endsWith('&') && !sb.endsWith('?')) {
-                sb.append('&')
-            }
-            for ((key, value) in params) {
-                sb.append(key)
-                sb.append('=')
-                sb.append(value)
-                sb.append('&')
-            }
-            sb.deleteCharAt(sb.length - 1)
-        }
-
-        return sb.toString()
-    }
 
     fun clone(): NkRequest<T> {
         val n = NkRequest(convert)

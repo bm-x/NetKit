@@ -6,13 +6,14 @@ import android.os.Environment
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.request.NkRequest
+import okhttp3.OkHttpClient
 import java.io.File
 import kotlin.properties.Delegates
 
 /**
  * Created by buck on 2017/11/8.
  */
-class NkConfig() {
+open class NkConfig() {
 
     constructor(initBlock: NkConfig.() -> Unit) : this() {
         initBlock()
@@ -21,6 +22,7 @@ class NkConfig() {
     var application: Application? = null
 
     val header = NkHeaders()
+    val querys = HashMap<String, Any>()
     val params = HashMap<String, Any>()
     var cachePolicy: ICachePolicy = CachePolicy.NONE.policy()
 
@@ -56,6 +58,10 @@ class NkConfig() {
     fun httpLog(enable: Boolean) = also { httpLog = enable }
 
     fun cacheMode() {
+
+    }
+
+    open fun onBuildOkHttpClient(builder: OkHttpClient.Builder) {
 
     }
 
