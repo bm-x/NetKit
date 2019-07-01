@@ -26,6 +26,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.alibaba:fastjson:1.1.70.android'
     implementation 'org.jetbrains.anko:anko-commons:0.10.7'
+    implementation('com.catch:core-utils:1.8.3') {
+        exclude group: 'com.okfunc.netkit'
+    }
 
     implementation project(':netkit')
 }

@@ -8,6 +8,7 @@ import com.okfunc.netkit.bean.Record
 import com.okfunc.netkit.bean.ResponeWrap
 import com.okfunc.netkit.request.NkRequest
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.OkHttpClient
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -17,32 +18,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        NetKit.globalConfig.httpLog = true
+        NetKit.globalConfig = object : NkConfig() {
+            init {
+                httpLog = true
+            }
+
+            override fun onBuildOkHttpClient(builder: OkHttpClient.Builder) {
+                builder.cookieJar(CookiesManager())
+            }
+        }
 
         btn.setOnClickListener {
 
-            try {
-                // val file = getExternalFilesDir(null)
-                val file = File(Environment.getExternalStorageDirectory(), "Android")
-                val okfunc = File(file, "okfunc")
-                okfunc.mkdirs()
-                File(okfunc, "${packageName}.debug").writeText("true")
-                Log.i("clyde", file.absolutePath)
-            } catch (e: Throwable) {
-                Log.e("clyde", "", e)
-            }
+            //            try {
+//                // val file = getExternalFilesDir(null)
+//                val file = File(Environment.getExternalStorageDirectory(), "Android")
+//                val okfunc = File(file, "okfunc")
+//                okfunc.mkdirs()
+//                File(okfunc, "${packageName}.debug").writeText("true")
+//                Log.i("clyde", file.absolutePath)
+//            } catch (e: Throwable) {
+//                Log.e("clyde", "", e)
+//            }
 
-//            post("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
-////                    .onSuccess { target, bundle, req, res, ignore ->
-////                        Log.d("clyde", "success $target")
-////                    }
-//                    .success { target: ResponeWrap<List<Record>> ->
-//                        Log.d("clyde", "code ${target.code}   msg ${target.msg}  ${target.page.size}")
+            get("http://10.2.0.91:10001/clientLogin/getCaptcha.jpg").stringConvert()
+//                    .onSuccess { target, bundle, req, res, ignore ->
+//                        Log.d("clyde", "success $target")
 //                    }
-//                    .onFinish { req, ignore ->
-//                        Log.d("clyde", "finish")
-//                    }
-//                    .end()
+                    .success { target: String ->
+                        Log.d("clyde", target)
+                    }
+                    .onFinish { req, ignore ->
+                        Log.d("clyde", "finish")
+                    }
+                    .end()
         }
     }
 
