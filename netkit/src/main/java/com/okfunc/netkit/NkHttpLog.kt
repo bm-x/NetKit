@@ -27,8 +27,16 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
         val request = chain.request()
 
         val t1 = System.nanoTime()
+        val url = request.url()
+        val okHttpClient = NetKit.okHttpClient()
+        val cookies = okHttpClient.cookieJar().loadForRequest(url)
+        val cookieString = if (cookies.isEmpty()) {
+            ""
+        } else {
+            "Cookies : " + cookies.map { "${it}\n" }.joinToString("")
+        }
 
-        val sendTxt = "Sending request [${request.method()}] ${request.url()}\n${request.headers()}\n${reqBody(request)}"
+        val sendTxt = "Sending request [${request.method()}] ${url}\n${request.headers()}${cookieString}${reqBody(request)}"
 
         val response = try {
             chain.proceed(request)
