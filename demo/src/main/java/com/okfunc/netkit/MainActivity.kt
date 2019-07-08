@@ -20,17 +20,22 @@ class MainActivity : AppCompatActivity() {
         NetKit.globalConfig.httpLog = true
 
         btn.setOnClickListener {
+            get("https://raw.githubusercontent.com/bm-x/PhotoView/master/.gitignore").stringConvert()
+                    .onSuccess { target, bundle, req, res, ignore ->
 
-            try {
-                // val file = getExternalFilesDir(null)
-                val file = File(Environment.getExternalStorageDirectory(), "Android")
-                val okfunc = File(file, "okfunc")
-                okfunc.mkdirs()
-                File(okfunc, "${packageName}.debug").writeText("true")
-                Log.i("clyde", file.absolutePath)
-            } catch (e: Throwable) {
-                Log.e("clyde", "", e)
-            }
+                    }
+                    .end()
+
+//            try {
+//                // val file = getExternalFilesDir(null)
+//                val file = File(Environment.getExternalStorageDirectory(), "Android")
+//                val okfunc = File(file, "okfunc")
+//                okfunc.mkdirs()
+//                File(okfunc, "${packageName}.debug").writeText("true")
+//                Log.i("clyde", file.absolutePath)
+//            } catch (e: Throwable) {
+//                Log.e("clyde", "", e)
+//            }
 
 //            post("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
 ////                    .onSuccess { target, bundle, req, res, ignore ->
