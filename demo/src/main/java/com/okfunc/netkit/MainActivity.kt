@@ -8,7 +8,6 @@ import com.okfunc.netkit.bean.Record
 import com.okfunc.netkit.bean.ResponeWrap
 import com.okfunc.netkit.request.NkRequest
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.OkHttpClient
 import org.jetbrains.anko.toast
 import java.io.File
 
@@ -18,19 +17,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        NetKit.globalConfig = object : NkConfig() {
-            init {
-                httpLog = true
-            }
-
-            override fun onBuildOkHttpClient(builder: OkHttpClient.Builder) {
-                builder.cookieJar(CookiesManager())
-            }
-        }
+        NetKit.globalConfig.httpLog = true
 
         btn.setOnClickListener {
+            get("https://raw.githubusercontent.com/bm-x/PhotoView/master/.gitignore").stringConvert()
+                    .onSuccess { target, bundle, req, res, ignore ->
 
-            //            try {
+                    }
+                    .end()
+
+//            try {
 //                // val file = getExternalFilesDir(null)
 //                val file = File(Environment.getExternalStorageDirectory(), "Android")
 //                val okfunc = File(file, "okfunc")
@@ -41,17 +37,17 @@ class MainActivity : AppCompatActivity() {
 //                Log.e("clyde", "", e)
 //            }
 
-            get("http://10.2.0.91:10001/clientLogin/getCaptcha.jpg").stringConvert()
-//                    .onSuccess { target, bundle, req, res, ignore ->
-//                        Log.d("clyde", "success $target")
+//            post("http://okfunc.com/record/r/show").objectConvert<ResponeWrap<List<Record>>>()
+////                    .onSuccess { target, bundle, req, res, ignore ->
+////                        Log.d("clyde", "success $target")
+////                    }
+//                    .success { target: ResponeWrap<List<Record>> ->
+//                        Log.d("clyde", "code ${target.code}   msg ${target.msg}  ${target.page.size}")
 //                    }
-                    .success { target: String ->
-                        Log.d("clyde", target)
-                    }
-                    .onFinish { req, ignore ->
-                        Log.d("clyde", "finish")
-                    }
-                    .end()
+//                    .onFinish { req, ignore ->
+//                        Log.d("clyde", "finish")
+//                    }
+//                    .end()
         }
     }
 
