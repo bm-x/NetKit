@@ -7,6 +7,8 @@ import com.okfunc.netkit.convert.NkConvert
 import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.Request
+import org.json.JSONArray
+import org.json.JSONObject
 import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
@@ -125,6 +127,22 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
     fun json(json: String) = also {
         mediaType = MEDIA_TYPE_JSON
         postContent = json
+    }
+
+    fun jsonArray(vararg params: Any) = also {
+        val json = JSONArray()
+        params.forEach {
+            json.put(it)
+        }
+        json(json.toString())
+    }
+
+    fun jsonObject(vararg params: Pair<Any, Any?>) = also {
+        val json = JSONObject()
+        params.forEach {
+            json.put(it.first.toString(), it.second)
+        }
+        json(json.toString())
     }
 
     fun end() {
