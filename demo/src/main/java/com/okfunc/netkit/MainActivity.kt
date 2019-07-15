@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         NetKit.globalConfig.httpLog = true
 
         btn.setOnClickListener {
-            get("https://raw.githubusercontent.com/bm-x/PhotoView/master/.gitignore").stringConvert()
+            get("https://github.com/").stringConvert()
                     .onSuccess { target, bundle, req, res, ignore ->
 
                     }

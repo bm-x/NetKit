@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.nio.charset.Charset
+import kotlin.math.ceil
 
 /**
  *
@@ -41,7 +42,7 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
         val response = try {
             chain.proceed(request)
         } catch (ex: Throwable) {
-            Log.e(TAG, writeToFile("${sendTxt}\n\nrequest ${request.url()} error: $ex\n-------------------------------------\n"))
+            log("${sendTxt}\n\nrequest ${request.url()} error: $ex\n-------------------------------------\n")
             throw ex
         }
 
@@ -63,11 +64,29 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
         } else "maybe [binary body] or empty, omitted!"
 
         val t2 = System.nanoTime()
-        Log.i(TAG, writeToFile("${sendTxt}\n\nReceived response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms\n${response.headers()}\nbody : $body\n-------------------------------------\n"))
+        log("${sendTxt}\n\nReceived response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms\n${response.headers()}\nbody : $body\n-------------------------------------\n")
         return res
     }
 
-    fun writeToFile(txt: String): String {
+    private fun log(logTxt: String) {
+        writeToFile(logTxt)
+        printLog(logTxt)
+    }
+
+    private fun printLog(log: String) {
+        if (log.length < 1000) {
+            Log.i(TAG, log)
+        } else {
+            for (i in 0 until (ceil(log.length / 1000f).toInt())) {
+                val start = i * 1000
+                var end = start + 1000
+                if (end > log.length) end = log.length
+                Log.i(TAG, log.substring(start, end))
+            }
+        }
+    }
+
+    fun writeToFile(txt: String) {
         if (saveToFile) {
             synchronized(lock) {
                 OutputStreamWriter(FileOutputStream(logpath, true), "utf-8").use {
@@ -75,7 +94,6 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
                 }
             }
         }
-        return txt
     }
 
     fun reqBody(req: Request): String {
