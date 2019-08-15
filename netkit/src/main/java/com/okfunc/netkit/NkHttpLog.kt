@@ -66,7 +66,8 @@ class NkHttpLog(val saveToFile: Boolean = false, val logpath: File? = null) : In
         } else "maybe [binary body] or empty, omitted!"
 
         val t2 = System.nanoTime()
-        log("${sendTxt}\n\nReceived response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms \n${response.headers()}Content-Length : ${contentLength}\nbody : $body\n-------------------------------------\n")
+        log("${sendTxt}\n\nReceived response for ${response.request().url()} in ${((t2 - t1) / 1e6).toInt()}ms \n${response.headers()}Content-Length : ${contentLength}\nbody : \n")
+        log("$body\n-------------------------------------\n")
         return res
     }
 

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import okhttp3.OkHttpClient
 import java.io.File
 
+val DEFAULT_CONFIG = NkConfig()
 
 /**
  *
@@ -16,7 +17,7 @@ import java.io.File
 @SuppressLint("StaticFieldLeak")
 object NetKit {
 
-    var globalConfig: NkConfig = NkConfig()
+    var globalConfig: NkConfig = DEFAULT_CONFIG
         set(value) {
             if (value.application == null) value.application = field.application
             field = value

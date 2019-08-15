@@ -13,9 +13,17 @@ import java.io.File
  */
 class NkPostAssemble<T> : NkRequestAssemble<T> {
     override fun buildUrl(builder: Request.Builder, req: NkRequest<T>): String {
+        val sb = StringBuilder()
         val host = req.host ?: NetKit.globalConfig.host
-        val path = if (host == null) req.path!! else "$host${req.path}"
-        val sb = StringBuilder(path)
+        val path = req.path ?: ""
+        if (host == null) {
+            sb.append(req.path)
+        } else {
+            sb.append(host)
+            if (sb.endsWith('/') && path.startsWith('/')) sb.deleteCharAt(sb.lastIndex)
+            else if (!sb.endsWith('/') && !path.startsWith('/')) sb.append('/')
+            sb.append(path)
+        }
         if (NetKit.globalConfig.querys.isNotEmpty()) req.querys.putAll(NetKit.globalConfig.querys)
         if (req.querys.isNotEmpty()) {
             if (!sb.contains('?')) {
