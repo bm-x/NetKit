@@ -19,6 +19,8 @@ open class NkConfig() {
         initBlock()
     }
 
+    var default = false;
+
     var application: Application? = null
 
     val header = NkHeaders()

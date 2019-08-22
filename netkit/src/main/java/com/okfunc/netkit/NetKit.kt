@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment
 import okhttp3.OkHttpClient
 import java.io.File
 
-val DEFAULT_CONFIG = NkConfig()
+val DEFAULT_CONFIG = NkConfig{
+    default = true
+}
 
 /**
  *

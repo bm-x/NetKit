@@ -11,7 +11,7 @@ class NkGetAssemble<T> : NkRequestAssemble<T> {
         val sb = StringBuilder()
         val host = req.host ?: NetKit.globalConfig.host
         val path = req.path ?: ""
-        if (host == null) {
+        if (host == null || host.length == 0) {
             sb.append(req.path)
         } else {
             sb.append(host)
