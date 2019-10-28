@@ -25,8 +25,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.alibaba:fastjson:1.1.71.android'
-    implementation 'org.jetbrains.anko:anko-commons:0.10.7'
-    implementation('com.catch:core-utils:1.9.7') {
+    implementation 'org.jetbrains.anko:anko-commons:0.10.8'
+    implementation('com.catch:core-utils:1.10.9') {
         exclude group: 'com.okfunc.netkit'
     }
 

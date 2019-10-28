@@ -34,27 +34,49 @@ class NkCall(val req: NkRequest<Any>) : Callback {
         okCall.enqueue(this)
     }
 
-    fun onAllFailure(call: Call, ex: Throwable) {
-        ex.printStackTrace()
-        postui { onError(ex) }
-        postui { onFinish() }
+    fun startSync() {
+        onStart()
+        try {
+            val res = okCall.execute()
+            onResponse(okCall, res, true)
+        } catch (e: Throwable) {
+            onAllFailure(okCall, e, true)
+        }
     }
 
-    override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e)
+    fun onAllFailure(call: Call, ex: Throwable, sync: Boolean) {
+        ex.printStackTrace()
+        if (sync) {
+            onError(ex)
+            onFinish()
+        } else {
+            postui { onError(ex) }
+            postui { onFinish() }
+        }
+    }
 
-    override fun onResponse(c: Call, res: Response) = try {
+    override fun onFailure(call: Call, e: IOException) = onAllFailure(call, e, false)
+
+    override fun onResponse(c: Call, res: Response) = onResponse(c, res, false)
+
+    private fun onResponse(c: Call, res: Response, sync: Boolean) = try {
         cachePolicy.onResponse(c, res) policy@{ call, response ->
             bundle.okRespone(response)
             val ignore = NkIgnore()
             val result = req.convert.convertResponse(response, bundle, ignore)
             if (!ignore.ignore && !c.isCanceled) {
                 beforeSuccess(result, NkResponse.formOkResponse(call, response))
-                postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
-                postui { onFinish() }
+                if (sync) {
+                    onSuccess(result, NkResponse.formOkResponse(call, response))
+                    onFinish()
+                } else {
+                    postui { onSuccess(result, NkResponse.formOkResponse(call, response)) }
+                    postui { onFinish() }
+                }
             }
         }
     } catch (ex: Throwable) {
-        onAllFailure(c, ex)
+        onAllFailure(c, ex, sync)
     }
 
     fun postui(block: () -> Unit) {
@@ -62,7 +84,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
             try {
                 block()
             } catch (ex: Throwable) {
-                onAllFailure(okCall, ex)
+                onAllFailure(okCall, ex, false)
             }
         }
     }

@@ -149,6 +149,10 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
         NkController.enqueue(this as NkRequest<Any>)
     }
 
+    fun startSync() {
+        NkCall(this as NkRequest<Any>).startSync()
+    }
+
     fun buildOkRequest(): Request {
         val builder = Request.Builder()
         val assemble: NkRequestAssemble<T> = requestAssemble ?: NkGetAssemble<T>()

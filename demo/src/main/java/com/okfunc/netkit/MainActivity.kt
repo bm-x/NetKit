@@ -10,6 +10,7 @@ import com.okfunc.netkit.request.NkRequest
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 import java.io.File
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,11 +21,21 @@ class MainActivity : AppCompatActivity() {
         NetKit.globalConfig.httpLog = true
 
         btn.setOnClickListener {
-            get("https://github.com/").stringConvert()
-                    .onSuccess { target, bundle, req, res, ignore ->
-
-                    }
-                    .end()
+                thread {
+                    Log.e("clyde","start")
+                    get("https://github.com/").stringConvert()
+                            .onStart { req, ignore ->
+                                Log.i("clyde", "onStart")
+                            }
+                            .onSuccess { target, bundle, req, res, ignore ->
+                                Log.i("clyde", "success " + target)
+                            }
+                            .onFinish { req, ignore ->
+                                Log.i("clyde", "finish")
+                            }
+                            .startSync()
+                    Log.e("clyde","end")
+                }
 
 //            try {
 //                // val file = getExternalFilesDir(null)
