@@ -3,6 +3,7 @@ package com.okfunc.netkit
 import android.app.Application
 import android.content.Context
 import android.os.Environment
+import android.support.annotation.Keep
 import com.okfunc.netkit.cache.CachePolicy
 import com.okfunc.netkit.cache.ICachePolicy
 import com.okfunc.netkit.request.NkRequest
