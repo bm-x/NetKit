@@ -145,6 +145,13 @@ open class NkRequest<T>(val convert: NkConvert<T>) {
         json(json.toString())
     }
 
+    fun destory() {
+        tag = null
+        callbacks.clear()
+        cKeys.clear()
+        cValues.clear()
+    }
+
     fun end() {
         NkController.enqueue(this as NkRequest<Any>)
     }

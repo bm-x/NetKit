@@ -12,7 +12,7 @@ object NkController {
     fun enqueue(req: NkRequest<Any>) {
         synchronized(queue) {
             val call = NkCall(req)
-            queue.add(call)
+            if (req.tag != null) queue.add(call)
             call.start()
         }
     }
@@ -29,7 +29,7 @@ object NkController {
         }
     }
 
-    fun cancelAll(){
+    fun cancelAll() {
         queue.forEach { it.cancel() }
         queue.clear()
     }

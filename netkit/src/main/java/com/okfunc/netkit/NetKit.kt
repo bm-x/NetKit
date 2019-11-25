@@ -3,12 +3,10 @@ package com.okfunc.netkit
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.os.Environment
 import android.support.v4.app.Fragment
 import okhttp3.OkHttpClient
-import java.io.File
 
-val DEFAULT_CONFIG = NkConfig{
+val DEFAULT_CONFIG = NkConfig {
     default = true
 }
 
@@ -64,13 +62,13 @@ object NetKit {
     fun okHttpClient(): OkHttpClient = okHttpClient ?: makeDefaultOkHttpClient()
 }
 
-fun Any.post(path: () -> String) = NetKit.post(path()).also { it.tag = tagFilter(this) }
-fun Any.post(path: String?) = NetKit.post(path).also { it.tag = tagFilter(this) }
-fun Any.post(host: String?, path: String?) = NetKit.post(host, path).also { it.tag = tagFilter(this) }
+fun Any.post(path: () -> String) = NetKit.post(path())
+fun Any.post(path: String?) = NetKit.post(path)
+fun Any.post(host: String?, path: String?) = NetKit.post(host, path)
 
-fun Any.get(path: () -> String) = NetKit.get(path()).also { it.tag = tagFilter(this) }
-fun Any.get(path: String?) = NetKit.get(path).also { it.tag = tagFilter(this) }
-fun Any.get(host: String?, path: String?) = NetKit.get(host, path).also { it.tag = tagFilter(this) }
+fun Any.get(path: () -> String) = NetKit.get(path())
+fun Any.get(path: String?) = NetKit.get(path)
+fun Any.get(host: String?, path: String?) = NetKit.get(host, path)
 
 internal fun tagFilter(tag: Any?): Any? =
         if (tag is Activity || tag is Fragment || tag is android.app.Fragment) tag

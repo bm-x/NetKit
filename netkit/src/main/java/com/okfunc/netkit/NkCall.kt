@@ -91,6 +91,7 @@ class NkCall(val req: NkRequest<Any>) : Callback {
 
     fun cancel() {
         okCall.cancel()
+        req.destory()
     }
 
     fun onStart() {
@@ -103,6 +104,8 @@ class NkCall(val req: NkRequest<Any>) : Callback {
     }
 
     fun onFinish() {
+        NkController.remove(req)
+
         val ignore = NkIgnore()
         req.eachFunc(NkRequest.K_FINISH) {
             callFunc(it, arrayOf(req, ignore))
