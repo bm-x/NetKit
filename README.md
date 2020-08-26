@@ -39,9 +39,13 @@
 兼容的1.0方式
 ```kotlin
   // get https://www.api.com/example/get?key1=value1&key2=value2
-  get("https://www.api.com/example/get").stringConvert()
+  get("https://www.api.com/example/get").objectConvert<TargetObject>()
           .params("key1","value1")
           .params("key2","value2")
+          .headers("key","value)
+          .onStart { req, ignore -> }
           .onSuccess { target, bundle, req, res, ignore -> }
+          .onError { error, ignore -> }
+          .onFinish { req, ignore -> }
           .end()
  ```
