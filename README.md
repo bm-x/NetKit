@@ -40,8 +40,11 @@
 ```kotlin
   // get https://www.api.com/example/get?key1=value1&key2=value2
   get("https://www.api.com/example/get").objectConvert<TargetObject>()
-          .params("key1","value1")
-          .params("key2","value2")
+          .loadingDialogStyle1(this).errorHandler()
+          .pageArrayHanler(listview) // 对分页状态，上下拉刷新的处理
+          .querys("key1","value1")
+          .querys("key2","value2")
+          .params("key1","value1") // post
           .headers("key","value)
           .onStart { req, ignore -> }
           .onSuccess { target, bundle, req, res, ignore -> }
